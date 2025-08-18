@@ -1,0 +1,98 @@
+.student-details-container {
+    width:65%;
+    max-height: fit-content;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #d6c8f7;
+    margin-left:20%;
+    justify-content: space-between; 
+    
+  }
+  
+  .student-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: space-between; /* Add spacing */
+    width:90%;
+  }
+  .studentt-info{
+    background-color:#d6c8f7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .profile-pic {
+    width: 100px; /* Increase width */
+    height: 100px; /* Increase height */
+    font-size: 50px; /* Increase icon size */
+    background: whitesmoke;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin-bottom: 10px;
+    margin-left: 25%;
+    
+  }
+  .profile-pic:hover{
+  transform: scale(1.15);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .points-summary {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+    margin-left: 3%;
+  }
+  .point-box {
+    background-color: #fff;
+    padding: 20px;
+    text-align: center;
+    justify-content: center;
+    border: 2px solid #6f42c1;
+    border-radius: 10px;
+    width: 150px; /* Set a fixed width */
+    height: 150px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .point-box:hover {
+    transform: scale(1.15);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .activities-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .activities-table th,
+  .activities-table td {
+    padding: 10px;
+    border: 1px solid #000000;
+  }
+  
+  .activities-table th {
+    background: #d4c3fc;
+  }
+  
+  .activities-table td a {
+    color:black;
+    text-decoration: none;
+  }
+  
+  .activities-table td a:hover {
+    text-decoration: underline;
+  }

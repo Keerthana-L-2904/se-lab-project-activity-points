@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<parent>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-parent</artifactId>
+<version>3.2.2</version>
+<relativePath/>
+<!--     lookup parent from repository     -->
+</parent>
+<groupId>com.example</groupId>
+<artifactId>student-activity-points</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<name>student-activity-points</name>
+<description>Demo project for Spring Boot</description>
+<url>http://www.example.com</url>
+<licenses>
+<license>
+<name>The Apache License, Version 2.0</name>
+<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+<distribution>repo</distribution>
+</license>
+</licenses>
+<dependencies>
+<!--     Spring Boot Starter Dependencies     -->
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+<groupId>jakarta.persistence</groupId>
+<artifactId>jakarta.persistence-api</artifactId>
+<version>3.1.0</version>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<!--     <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>     -->
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-test</artifactId>
+<scope>test</scope>
+</dependency>
+<!--     MySQL JDBC Driver     -->
+<dependency>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+<scope>compile</scope>
+<version>8.0.32</version>
+</dependency>
+<!--     Other dependencies as needed     -->
+</dependencies>
+<build>
+<sourceDirectory>src/main/java</sourceDirectory>
+<outputDirectory>target/classes</outputDirectory>
+<plugins>
+<plugin>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-maven-plugin</artifactId>
+</plugin>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-compiler-plugin</artifactId>
+<version>3.8.1</version>
+<configuration>
+<source>21</source>
+<target>21</target>
+</configuration>
+</plugin>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-surefire-plugin</artifactId>
+<version>2.22.2</version>
+<configuration>
+<skipTests>true</skipTests>
+</configuration>
+</plugin>
+<plugin>
+<groupId>org.codehaus.mojo</groupId>
+<artifactId>exec-maven-plugin</artifactId>
+<version>3.1.0</version>
+<executions>
+<execution>
+<goals>
+<goal>java</goal>
+</goals>
+<configuration>
+<mainClass>com.example.student_activity_points.TestDBConnection</mainClass>
+</configuration>
+</execution>
+</executions>
+</plugin>
+</plugins>
+</build>
+</project>
