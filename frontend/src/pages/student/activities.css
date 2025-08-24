@@ -1,0 +1,60 @@
+.activities-container {
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  margin-top: 5%;
+  margin-left: 12%;
+  width: 85vw;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.activities-list {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 80vh;
+  /* Use a max height to allow scrolling if needed */
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.activity-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #a165e0;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  /* Removed margin-left to keep content within container */
+}
+
+.activity-details h3 {
+  margin: 0;
+  font-size: 22px;
+  color: black;
+}
+
+.activity-details p {
+  margin: 3px 0;
+  font-size: 14px;
+  color: white;
+  margin-left: 25px;
+  text-align: left;
+}
+
+.activity-points {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 18px;
+  margin-right: 40px;
+}
+
+.star-icon {
+  color: gold;
+}

@@ -1,0 +1,130 @@
+
+.main-content {
+  width: 90%;
+  max-width: 1200px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  height:80vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 40px;
+  text-transform: uppercase;
+}
+
+/* Stats Section */
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  flex: 1;
+  text-align: center;
+  background: #7535dd;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+
+.stat-card:hover {
+  transform: scale(1.05);
+}
+
+.stat-card .icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+/* Sections */
+.activities, .guidelines {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+.activities h2, .guidelines h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Activity Card */
+.activity-card {
+  background: linear-gradient(0deg,#7535dd 80.26%, rgba(146, 95, 226, 0) 143.39%, #E2D4F7 143.39%);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 15px;
+  transition: 0.3s;
+}
+.activity-card:hover {
+  transform: scale(1.05);
+}
+
+/* Buttons */
+.activity-button, .guidelines-button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.link{
+  text-decoration: none;
+  color: white;
+}
+.activity-button:hover, .guidelines-button:hover {
+  background: #372f92;
+}
+
+/* Guidelines Card */
+.guidelines-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.guidelines-card h3 {
+  color: #333;
+}
+
+.guidelines-button i {
+  font-size: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-card {
+    width: 80%;
+  }
+}

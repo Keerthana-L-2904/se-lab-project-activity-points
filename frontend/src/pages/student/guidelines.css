@@ -1,0 +1,44 @@
+.guidelines-container {
+    margin-top: 6%;
+    margin-left:20%;
+  }
+  
+  .guidelines-header {
+    text-align: center;
+    margin-bottom: 3%;
+    margin-right: 13%;
+  }
+  
+  .guidelines-header h3 {
+    font-size: 28px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .guidelines-list {
+    margin-top: 10px;
+    width:fit-content;
+    padding: 0.5%;
+
+  }
+  
+  .guideline-item {
+    margin-bottom: 15px;
+  }
+  
+  .alert-info {
+    display: flex;
+    align-items: center;
+    background-color: rgb(50, 191, 230);
+    color:black;
+    width:fit-content;
+    padding: 0.5%;
+    border-radius: 30px;
+  }
+  .alert-info:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .card-title{
+    font-size: 20px;
+  }
