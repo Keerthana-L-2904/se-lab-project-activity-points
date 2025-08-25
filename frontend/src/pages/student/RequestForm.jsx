@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import "./request.css";
+import upload_area from "../../assets/upload_area.png";
 
 const RequestForm = () => {
   const { user, loading } = useContext(AuthContext);
@@ -20,6 +21,7 @@ const RequestForm = () => {
   });
   const [faculties, setFaculties] = useState([]);
   const [errors, setErrors] = useState({});
+  const [image,setimage]=useState(false);
 
   const fetchActivityData = async () => {
     try {
@@ -67,11 +69,7 @@ const RequestForm = () => {
     fetchActivityData();
   }, []);
 
-  // Extract SID from email
-  const extractSid = (email) => {
-    const parts = email.split("@")[0].split("_");
-    return parts.length > 1 ? parts[1].toUpperCase() : email.split("@")[0].toUpperCase();
-  };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,24 +89,20 @@ const RequestForm = () => {
     });
   };
 
-  // FA selection functions
-  const addFA = () => {
-    setFormData({
-      ...formData,
-      "select FA": [...formData["select FA"], ""]
-    });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+  
+    if (file) {
+      if (file.type !== "application/pdf") {
+        alert("Only PDF files are allowed!");
+        return;
+      }
+  
+      // if valid, you can preview filename or send it to backend
+      console.log("Selected file:", file.name);
+    }
   };
-
-  const removeFA = (index) => {
-    const newFA = formData["select FA"].filter((_, i) => i !== index);
-    setFormData({ ...formData, "select FA": newFA });
-  };
-
-  const handleFAChange = (e, index) => {
-    const newFA = [...formData["select FA"]];
-    newFA[index] = e.target.value;
-    setFormData({ ...formData, "select FA": newFA });
-  };
+  
 
   const validateForm = () => {
     let errors = {};
@@ -226,33 +220,9 @@ const RequestForm = () => {
             {errors.category && <span className="error">{errors.category}</span>}
           </div>
 
-          <div className="form-group">
-            <label>Select FA:</label>
-            <div className="fa-inputs">
-              {formData["select FA"].map((fa, index) => (
-                <div key={index} className="fa-item">
-                  <select
-                    name="select FA"
-                    value={fa}
-                    onChange={(e) => handleFAChange(e, index)}
-                  >
-                    <option value="">Select FA</option>
-                    {faculties.map(fa => (
-                      <option key={fa.faid} value={fa.faid}>
-                        {fa.name} {fa.department?.name && `(${fa.department.name})`}
-                      </option>
-                    ))}
-                  </select>
-                  <button type="button" className="remove-fa-button"onClick={() => removeFA(index)}>
-                    Remove
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button type="button" className="add-fa-button" onClick={addFA}>
-              Add FA
-            </button>
-          </div>
+          
+            
+           
 
           <div className="form-group">
             {!formData.isCustomActivity ? (
@@ -267,14 +237,19 @@ const RequestForm = () => {
                     )}
                 </select>
                 {errors.activity && <span className="error">{errors.activity}</span>}
+                <label htmlFor='file'>
+              <img src={image==false?upload_area:image} alt="upload-area"   style={{cursor:"pointer"}}/>
+            </label>
+            <input 
+  type="file" 
+  id="file" 
+  accept=".pdf"    // restrict only PDFs
+  onChange={handleFileChange}
+  hidden 
+  required 
+/>
                 <div className="url-and-not-listed">
-                  <input
-                    type="text"
-                    name="pastUrl"
-                    placeholder="Past URL (if applicable)"
-                    value={formData.pastUrl}
-                    onChange={handleChange}
-                  />
+               
                   <button
                     type="button"
                     className="not-listed-btn"
@@ -344,13 +319,18 @@ const RequestForm = () => {
                   {errors.description && <span className="error">{errors.description}</span>}
                 </div>
               </div>
-              <input
-                type="text"
-                name="pastUrl"
-                placeholder="Past URL (if applicable)"
-                value={formData.pastUrl}
-                onChange={handleChange}
-              />
+              <label htmlFor='file'>
+              <img src={upload_area} alt="upload-area"  style={{cursor:"pointer"}}/>
+            </label>
+            <input 
+  type="file" 
+  id="file" 
+  accept=".pdf"    // restrict only PDFs
+  onChange={handleFileChange}
+  hidden 
+  required 
+/>
+
               <div className="close">
                 <button type="button" className="close-btn" onClick={resetCustomActivity}>
                   Close

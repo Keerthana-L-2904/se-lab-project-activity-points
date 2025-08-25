@@ -16,6 +16,15 @@ public class Requests {
     @Column(name = "rid")
     private Long rid;
     
+    @Lob
+    @Column(name = "proof", columnDefinition = "LONGBLOB")
+    private byte[] proof;
+    public byte[] getProof() {
+        return proof;
+    }
+    public void setProof(byte[] proof) {
+        this.proof = proof;
+    }
     @Column(unique = true, nullable = false)
     private String sid;  
 
@@ -29,7 +38,7 @@ public class Requests {
     @Column(name = "link")
     private String link;
 
-    @Column(name = "decison_date") // note: column name "decison_date" as per your existing schema
+    @Column(name = "decision_date") 
     private Date decisionDate;
 
     @Column(name = "activity_name")

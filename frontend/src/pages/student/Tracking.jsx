@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import "./student.css";
+import ActivityModal from "../../components/ActivityModal/ActivityModal";
 
 const Tracking = () => {
   const { user } = useContext(AuthContext); // Get user details from AuthContext
@@ -8,6 +9,11 @@ const Tracking = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [status, setStatus] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  
 
   // Updated function to extract student ID from email in uppercase
   const getSid = (email) => {
@@ -49,6 +55,26 @@ const Tracking = () => {
         return "pending";
     }
   };
+  const compareRequests = (a, b) => {
+    const hasDecisionA = !a.decisionDate;
+    const hasDecisionB = !b.decisionDate;
+  
+    // Case 1: both have decision dates → sort by decisionDate (desc)
+    if (hasDecisionA && hasDecisionB) {
+      return new Date(b.decisionDate) - new Date(a.decisionDate);
+    }
+  
+    // Case 2: neither has decisionDate (both pending) → sort by request date (desc)
+    if (!hasDecisionA && !hasDecisionB) {
+      return new Date(b.date) - new Date(a.date);
+    }
+  
+    // Case 3: one is decided, other is pending → pending requests first
+    if (!hasDecisionA) return -1;
+    if (!hasDecisionB) return 1;
+  
+    return 0;
+  };
 
   const fetchRequestById = (id) => {
     fetch(`http://localhost:8080/requests/${id}`)
@@ -67,6 +93,8 @@ const Tracking = () => {
       });
   };
 
+ 
+
   return (
     <div className="content">
       <div className="tracking">
@@ -74,15 +102,59 @@ const Tracking = () => {
 
         {loading && <p>Loading...</p>}
         {error && <p className="error">{error}</p>}
-
+        
         {!loading && !error && trackingRequests.length > 0 ? (
           <div className="tracking-section">
-            {trackingRequests.map((request) => (
-              <div key={request.rid} className="tracking-items">
-                <h3 onClick={() => fetchRequestById(request.rid)} style={{ cursor: "pointer" }}>
+            <div className="tracking-header">
+                <div className="search">
+                <label style={{fontSize:"16px"}}>Search by name:</label>
+                <input
+                  type="text"
+                  placeholder="Enter activity name"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                </div>
+                <div className="status-filter">
+                      <div
+                        className={`status-pending ${status === "Pending" ? "active" : ""}`}
+                        onClick={() => setStatus(status === "Pending" ? "" : "Pending")}
+                      >
+                        Pending
+                      </div>
+                      <div
+                        className={`status-approved ${status === "Approved" ? "active" : ""}`}
+                        onClick={() => setStatus(status === "Approved" ? "" : "Approved")}
+                      >
+                        Approved
+                      </div>
+                      <div
+                        className={`status-rejected ${status === "Rejected" ? "active" : ""}`}
+                        onClick={() => setStatus(status === "Rejected" ? "" : "Rejected")}
+                      >
+                        Rejected
+                      </div>
+                    </div>
+                
+              </div>
+             
+            {trackingRequests.filter(request => request.status.toLowerCase().includes(status.toLowerCase())).filter(request => request.activityName.toLowerCase().includes(searchQuery.toLowerCase())).sort(compareRequests).map((request) => (
+              <div key={request.rid} className="tracking-items" onClick={() => {
+                fetchRequestById(request.rid)
+                setSelectedRequest(request); // set activity data
+
+                setIsOpen(true); // open modal
+              }}>
+                <div className="tracking-item-header"  style={{ display: "flex", justifyContent:"space-between" }}>
+                <h3  style={{ cursor: "pointer" }}>
                   {request.activityName || "No Title"}
                 </h3>
                 <span className={getStatusClass(request.status)}>{request.status}</span>
+                </div>
+                <div className="dates" style={{ display: "flex", flexDirection: "column" }}>
+                <span>Request date:{new Date(request.date).toLocaleString()}</span>
+                <span>Decision date:{new Date(request.decisionDate).toLocaleString()}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -90,17 +162,12 @@ const Tracking = () => {
           <p>No tracking requests found.</p>
         )}
 
-        {selectedRequest && (
-          <div className="request-details">
-            <h2>Request Details</h2>
-            <p><strong>ID:</strong> {selectedRequest.rid}</p>
-            <p><strong>Activity Name:</strong> {selectedRequest.activityName || "N/A"}</p>
-            <p><strong>Description:</strong> {selectedRequest.description || "No description"}</p>
-            <p><strong>Status:</strong> {selectedRequest.status}</p>
-            <p><strong>Activity Date:</strong> {selectedRequest.activityDate || "N/A"}</p>
-            <button onClick={() => setSelectedRequest(null)}>Close</button>
-          </div>
-        )}
+        {/* Modal */}
+        <ActivityModal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        activity={selectedRequest}
+      />
       </div>
     </div>
   );
