@@ -157,16 +157,27 @@ const Approvals = () => {
           </thead>
           <tbody>
             {requests
+<<<<<<< HEAD
               .filter((req)=>req.status==='Pending')
               .filter((req) => req.sid.includes(searchQuery))
               .map((req, index) => (
                 <tr key={req.rid} className={req.status === "Approved" ? "approved-row" : req.status === "Rejected" ? "rejected-row" : ""}>
+=======
+              .filter((req)=>req.validated==='Pending')
+              .filter((req) => req.sid.includes(searchQuery))
+              .map((req, index) => (
+                <tr key={req.rid} className={req.validated === "Approved" ? "approved-row" : req.validated === "Rejected" ? "rejected-row" : ""}>
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
                   <td>{req.sid}</td>
                   <td>{req.activity_name}</td>
                   <td>{new Date(req.activity_date).toLocaleDateString("en-GB")}</td>
                   <td>{req.type}</td>
                   <td>
+<<<<<<< HEAD
                     {req.waiting_for_other_FAs ? "⏳ Waiting for Others" : req.status}
+=======
+                    {req.waiting_for_other_FAs ? "⏳ Waiting for Others" : req.validated}
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
                   </td>
                   <td>
                     {req.link ? (
@@ -206,7 +217,11 @@ const Approvals = () => {
                     <button
                       className="approve-btn"
                       onClick={() => handleApprove(req.rid, index,req.sid)}
+<<<<<<< HEAD
                       disabled={req.status === "Approved" || req.status === "Rejected"}
+=======
+                      disabled={req.validated === "Approved" || req.validated === "Rejected"}
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
                     >
                       ✔️ Approve
                     </button>
@@ -215,7 +230,11 @@ const Approvals = () => {
                     <button
                       className="reject-btn"
                       onClick={() => handleReject(req.rid, index)}
+<<<<<<< HEAD
                       disabled={req.status === "Rejected"}
+=======
+                      disabled={req.validated === "Rejected"}
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
                     >
                       ❌ Reject
                     </button>

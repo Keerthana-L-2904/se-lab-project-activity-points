@@ -1,72 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import './admin.css';
+import '../admin/admin.css';
 import axios from 'axios';
 
-const ActivityManagement = () => {
-  const [activities, setActivities] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
-  const [editActivity, setEditActivity] = useState(null);
-  const [newActivity, setNewActivity] = useState({
-    name: '',
-    type: '',
-    mandatory: '',
-    did: '',
-<<<<<<< HEAD
-    description: '',
-    outside_inside: '',
-=======
-    description: '',   
-    outside_inside: '',   
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
-    date: '',
-    end_date: '',
-    points: '',
-    no_of_people: ''
-  });
-<<<<<<< HEAD
-  
-  // Fetch activities from backend
-=======
-  const [attendanceUploaded, setAttendanceUploaded] = useState({});
 
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
+const ActivityManagement = () => {
+	const [activities, setActivities] = useState([]);
+	const [departments, setDepartments] = useState([]);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [isAddModalOpen, setAddModalOpen] = useState(false);
+	const [editActivity, setEditActivity] = useState(null);
+	const [newActivity, setNewActivity] = useState({
+		name: '',
+		type: '',
+		mandatory: '',
+		did: '',
+		description: '',   
+		outside_inside: '',   
+		date: '',
+		end_date: '',
+		points: '',
+		no_of_people: ''
+	});
+	// ...existing code from ManageActivities.jsx...
+	// (Copy the full code from the admin version here, except the import line)
+
+// attendanceUploaded state is now derived from backend data
+const [attendanceUploaded, setAttendanceUploaded] = useState({});
+
+  // Fetch activities from backend
   useEffect(() => {
     fetchData();
     getDeptData();
   }, []);
 
-<<<<<<< HEAD
 
-  const handleUploadAttendance = (actID) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".csv"; // Change as needed
-=======
+
+  // Upload or update attendance handler
   const handleAttendance = (actID, isUpdate = false) => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".csv";
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
     input.onchange = async (event) => {
       const file = event.target.files[0];
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
         try {
-<<<<<<< HEAD
-          const response=await axios.post(`/api/admin/upload-attendance/${actID}`, formData);
-          if(response.status===200){
-            alert("Attendance uploaded successfully!");
-          }
-          else alert("Failed to upload attendance!");
-        } catch (error) {
-          console.error("Error uploading attendance", error);
-          alert("Failed to upload attendance.");
-=======
-          const response = await axios.post(`/api/admin/upload-attendance/${actID}`, formData);
+          const response = await axios.post(`/api/fa/upload-attendance/${actID}`, formData);
           if (response.status === 200) {
             alert(isUpdate ? "Attendance updated successfully!" : "Attendance uploaded successfully!");
             setAttendanceUploaded(prev => ({ ...prev, [actID]: true }));
@@ -77,49 +58,34 @@ const ActivityManagement = () => {
         } catch (error) {
           console.error(isUpdate ? "Error updating attendance" : "Error uploading attendance", error);
           alert(isUpdate ? "Failed to update attendance." : "Failed to upload attendance.");
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         }
       }
     };
     input.click();
   };
-<<<<<<< HEAD
   
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
+
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/admin/manage-activities");
+      const response = await axios.get("/api/fa/manage-activities");
       if (response.status === 200) {
         const today = new Date();
-<<<<<<< HEAD
-        const updatedActivities = response.data.map(activity => {
-          const startDate = new Date(activity.start_date); // Make sure your backend sends a start_date field
-          const endDate = new Date(activity.end_date); 
-  
-=======
         const uploadedMap = {};
         const updatedActivities = response.data.map(activity => {
           const startDate = new Date(activity.date || activity.start_date);
           const endDate = new Date(activity.end_date);
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
           let status = "Upcoming";
           if (today >= startDate && today <= endDate) {
             status = "Ongoing";
           } else if (today > endDate) {
             status = "Completed";
           }
-<<<<<<< HEAD
-          return { ...activity, status };
-        });
-  
-=======
+          // Use backend attendanceUploaded property
           uploadedMap[activity.actID] = !!activity.attendanceUploaded;
           return { ...activity, status };
         });
         setAttendanceUploaded(uploadedMap);
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         setActivities(updatedActivities);
       } else {
         alert('Error loading activities!');
@@ -129,14 +95,11 @@ const ActivityManagement = () => {
       alert('Failed to fetch activities!');
     }
   };
-<<<<<<< HEAD
   
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   const getDeptData=async()=>{
     try {
-      const response = await axios.get("/api/admin/get-departments");
+      const response = await axios.get("/api/fa/get-departments");
       if (response.status === 200) {
         setDepartments(response.data);
       } else {
@@ -144,26 +107,16 @@ const ActivityManagement = () => {
       }
     } catch (error) {
       console.error('Error fetching departments', error);
-<<<<<<< HEAD
       
     }
   };
 
   // Add a new activity
-=======
-    }
-  };
-
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
   const handleAddActivity = async () => {
     try {
-      const response = await axios.post("/api/admin/manage-activities", newActivity);
+      const response = await axios.post("/api/fa/manage-activities", newActivity);
       if (response.status === 200) {
-<<<<<<< HEAD
         fetchData(); // Refresh list
-=======
-        fetchData();
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         setAddModalOpen(false);
         setNewActivity({
           name: '',
@@ -186,19 +139,12 @@ const ActivityManagement = () => {
     }
   };
 
-<<<<<<< HEAD
   // Edit an existing activity
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`/api/admin/manage-activities/${editActivity.actID}`, editActivity);
+      const response = await axios.put(`/api/fa/manage-activities/${editActivity.actID}`, editActivity);
       if (response.status === 200) {
-<<<<<<< HEAD
         fetchData(); // Refresh list
-=======
-        fetchData();
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         setIsEditModalOpen(false);
       } else {
         alert("Error updating activity!");
@@ -209,21 +155,13 @@ const ActivityManagement = () => {
     }
   };
 
-<<<<<<< HEAD
   // Delete an activity
   const handleDelete = async (id) => {
     try {
       console.log(id);
-      const response = await axios.delete(`/api/admin/manage-activities/${id}`);
+      const response = await axios.delete(`/api/fa/manage-activities/${id}`);
       if (response.status === 200) {
         fetchData(); // Refresh list
-=======
-  const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(`/api/admin/manage-activities/${id}`);
-      if (response.status === 200) {
-        fetchData();
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
       } else {
         alert("Error deleting activity!");
       }
@@ -233,10 +171,7 @@ const ActivityManagement = () => {
     }
   };
 
-<<<<<<< HEAD
   // Open Edit Modal
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
   const handleEdit = (activity) => {
     setEditActivity(activity);
     setIsEditModalOpen(true);
@@ -258,15 +193,10 @@ const ActivityManagement = () => {
           </div>
           <button className="Add" onClick={() => setAddModalOpen(true)}>Add Activity</button>
         </div>
-<<<<<<< HEAD
 
       </div>
       <div className="body">
        
-=======
-      </div>
-      <div className="body">
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         <table className="styled-table">
           <thead>
             <tr>
@@ -302,16 +232,6 @@ const ActivityManagement = () => {
         <td>{activity.no_of_people || 0}</td>
         <td>{activity.status }</td>
         <td>
-<<<<<<< HEAD
-  {activity.status === "Completed" && activity.outside_inside==="Inside" ? (
-    <button style={{padding:"1px",borderRadius:"2px",cursor:"pointer"}} onClick={() => handleUploadAttendance(activity.actID)}>
-      Upload Attendance
-    </button>
-  ) : (
-    "N/A"
-  )}
-</td>
-=======
   {activity.status === "Completed" && activity.outside_inside === "Inside" ? (
     attendanceUploaded[activity.actID] ? (
       <>
@@ -329,7 +249,6 @@ const ActivityManagement = () => {
     "N/A"
   )}
         </td>
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         <td>
           <i className="bi bi-pencil-fill" onClick={() => handleEdit(activity)}></i>
           <i className="bi bi-trash-fill" onClick={() => handleDelete(activity.actID)}></i>
@@ -339,10 +258,7 @@ const ActivityManagement = () => {
 </tbody>
         </table>
       </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
       {/* Edit Modal */}
       {isEditModalOpen && (
         <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
@@ -376,10 +292,7 @@ const ActivityManagement = () => {
           </div>
         </div>
       )}
-<<<<<<< HEAD
 
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
       {/* Add Modal */}
       {isAddModalOpen && (
         <div className="modal-overlay" onClick={() => setAddModalOpen(false)}>
@@ -401,15 +314,10 @@ const ActivityManagement = () => {
             <label>Mandatory:</label>
             <select value={newActivity.mandatory} onChange={(e) => setNewActivity({...newActivity, mandatory: e.target.value})}>
               <option value="">Select value</option>
-<<<<<<< HEAD
               {/* {departments.map(dept => ( */}
                 <option key={1} value={1}>Yes</option>
                 <option key={0} value={0}>No</option>
               {/* ))} */}
-=======
-                <option key={1} value={1}>Yes</option>
-                <option key={0} value={0}>No</option>
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
             </select>
             <label>Description:</label>
             <input type="text" value={newActivity.description} onChange={(e) => setNewActivity({...newActivity, description: e.target.value})} />
@@ -436,8 +344,8 @@ const ActivityManagement = () => {
   );
 };
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 export default ActivityManagement;
+
+
+// The full code will be copied from the current ManageActivities.jsx

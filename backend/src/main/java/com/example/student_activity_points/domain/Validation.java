@@ -17,9 +17,6 @@ public class Validation {
     @Column(name = "SID", nullable = false)
     private String sid;
 
-
-    // private int actID;
-
     @ManyToOne
     @JoinColumn(name = "actID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -31,9 +28,9 @@ public class Validation {
 
     @Column(name = "validated", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Validated validated = Validated.Pending;
+    private Validated validated = Validated.NA;
 
-    public enum Validated { No, Yes, Pending }
+    public enum Validated { No, Yes, NA }
 
     // Getters and Setters
     public Long getVid() { return vid; }

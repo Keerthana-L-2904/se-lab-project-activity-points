@@ -16,9 +16,6 @@ public interface StudentRepository extends CrudRepository<Student, String> {
     // Fetch student by student ID
     Optional<Student> findBySid(String studentID);
 
-
-    // List<Student> findByFAID(int FAID);
-
     @Query("SELECT s FROM Student s WHERE s.FAID = :FAID")
     List<Student> findByFAID(@Param("FAID") int FAID);
 

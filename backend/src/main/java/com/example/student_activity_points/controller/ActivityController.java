@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/activities")
-@CrossOrigin(origins = "http://localhost:3000") // Ensure React can access it
+@CrossOrigin(origins = "http://localhost:5173") // Ensure React can access it
 public class ActivityController {
 
     private final ActivityRepository activityRepository;

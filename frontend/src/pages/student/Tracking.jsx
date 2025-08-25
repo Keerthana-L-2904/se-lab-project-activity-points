@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import "./student.css";
+<<<<<<< HEAD
 import ActivityModal from "../../components/ActivityModal/ActivityModal";
+=======
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
 const Tracking = () => {
   const { user } = useContext(AuthContext); // Get user details from AuthContext
@@ -9,11 +12,14 @@ const Tracking = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
+<<<<<<< HEAD
   const [searchQuery, setSearchQuery] = useState('');
   const [status, setStatus] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
   
+=======
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   // Updated function to extract student ID from email in uppercase
   const getSid = (email) => {
@@ -25,6 +31,7 @@ const Tracking = () => {
 
   const sid = getSid(user.sid); // Extract student ID in uppercase
 
+<<<<<<< HEAD
   useEffect(() => {
     if (!sid) return;
 
@@ -44,6 +51,32 @@ const Tracking = () => {
         setLoading(false);
       });
   }, [sid]); // Re-fetch when sid changes
+=======
+ useEffect(() => {
+  if (!sid) return;
+
+  fetch(`http://localhost:8080/api/${sid}/tracking`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch tracking data");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Save both requests and activities
+      setTrackingRequests([
+        ...data.requests.map(r => ({ ...r, type: "request" })),
+        ...data.activities.map(a => ({ ...a, type: "activity" }))
+      ]);
+      setLoading(false);
+    })
+    .catch((error) => {
+      setError(error.message);
+      setLoading(false);
+    });
+}, [sid]);
+
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -55,6 +88,7 @@ const Tracking = () => {
         return "pending";
     }
   };
+<<<<<<< HEAD
   const compareRequests = (a, b) => {
     const hasDecisionA = !a.decisionDate;
     const hasDecisionB = !b.decisionDate;
@@ -75,6 +109,8 @@ const Tracking = () => {
   
     return 0;
   };
+=======
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   const fetchRequestById = (id) => {
     fetch(`http://localhost:8080/requests/${id}`)
@@ -93,8 +129,11 @@ const Tracking = () => {
       });
   };
 
+<<<<<<< HEAD
  
 
+=======
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
   return (
     <div className="content">
       <div className="tracking">
@@ -102,6 +141,7 @@ const Tracking = () => {
 
         {loading && <p>Loading...</p>}
         {error && <p className="error">{error}</p>}
+<<<<<<< HEAD
         
         {!loading && !error && trackingRequests.length > 0 ? (
           <div className="tracking-section">
@@ -158,16 +198,47 @@ const Tracking = () => {
               </div>
             ))}
           </div>
+=======
+
+        {!loading && !error && trackingRequests.length > 0 ? (
+        <div className="tracking-section">
+          {trackingRequests.map((item, index) => (
+            <div key={index} className="tracking-items">
+              <h3>
+                {item.type === "request" ? item.activityName : item.title}
+              </h3>
+              <span className={getStatusClass(item.type === "request" ? item.status : item.validated)}>
+                {item.type === "request" ? item.status : item.validated}
+              </span>
+            </div>
+          ))}
+        </div>
+
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
         ) : (
           <p>No tracking requests found.</p>
         )}
 
+<<<<<<< HEAD
         {/* Modal */}
         <ActivityModal
         open={isOpen}
         onClose={() => setIsOpen(false)}
         activity={selectedRequest}
       />
+=======
+        {selectedRequest && (
+          <div className="request-details">
+            <h2>Request Details</h2>
+            <p><strong>ID:</strong> {selectedRequest.rid}</p>
+            <p><strong>Activity Name:</strong> {selectedRequest.activityName || "N/A"}</p>
+            <p><strong>Description:</strong> {selectedRequest.description || "No description"}</p>
+            <p><strong>Status:</strong> {selectedRequest.status}</p>
+            <p><strong>Activity Date:</strong> {selectedRequest.activityDate || "N/A"}</p>
+            <button onClick={() => setSelectedRequest(null)}>Close</button>
+          </div>
+        )}
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
       </div>
     </div>
   );

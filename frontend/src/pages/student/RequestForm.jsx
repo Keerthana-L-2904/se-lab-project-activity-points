@@ -2,7 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import "./request.css";
+<<<<<<< HEAD
 import upload_area from "../../assets/upload_area.png";
+=======
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
 const RequestForm = () => {
   const { user, loading } = useContext(AuthContext);
@@ -21,7 +24,10 @@ const RequestForm = () => {
   });
   const [faculties, setFaculties] = useState([]);
   const [errors, setErrors] = useState({});
+<<<<<<< HEAD
   const [image,setimage]=useState(false);
+=======
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   const fetchActivityData = async () => {
     try {
@@ -69,7 +75,15 @@ const RequestForm = () => {
     fetchActivityData();
   }, []);
 
+<<<<<<< HEAD
 
+=======
+  // Extract SID from email
+  const extractSid = (email) => {
+    const parts = email.split("@")[0].split("_");
+    return parts.length > 1 ? parts[1].toUpperCase() : email.split("@")[0].toUpperCase();
+  };
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -89,6 +103,7 @@ const RequestForm = () => {
     });
   };
 
+<<<<<<< HEAD
   const handleFileChange = (e) => {
     const file = e.target.files[0];
   
@@ -103,6 +118,26 @@ const RequestForm = () => {
     }
   };
   
+=======
+  // FA selection functions
+  const addFA = () => {
+    setFormData({
+      ...formData,
+      "select FA": [...formData["select FA"], ""]
+    });
+  };
+
+  const removeFA = (index) => {
+    const newFA = formData["select FA"].filter((_, i) => i !== index);
+    setFormData({ ...formData, "select FA": newFA });
+  };
+
+  const handleFAChange = (e, index) => {
+    const newFA = [...formData["select FA"]];
+    newFA[index] = e.target.value;
+    setFormData({ ...formData, "select FA": newFA });
+  };
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
   const validateForm = () => {
     let errors = {};
@@ -220,9 +255,39 @@ const RequestForm = () => {
             {errors.category && <span className="error">{errors.category}</span>}
           </div>
 
+<<<<<<< HEAD
           
             
            
+=======
+          <div className="form-group">
+            <label>Select FA:</label>
+            <div className="fa-inputs">
+              {formData["select FA"].map((fa, index) => (
+                <div key={index} className="fa-item">
+                  <select
+                    name="select FA"
+                    value={fa}
+                    onChange={(e) => handleFAChange(e, index)}
+                  >
+                    <option value="">Select FA</option>
+                    {faculties.map(fa => (
+                      <option key={fa.faid} value={fa.faid}>
+                        {fa.name} {fa.department?.name && `(${fa.department.name})`}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="button" className="remove-fa-button"onClick={() => removeFA(index)}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button type="button" className="add-fa-button" onClick={addFA}>
+              Add FA
+            </button>
+          </div>
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
           <div className="form-group">
             {!formData.isCustomActivity ? (
@@ -237,6 +302,7 @@ const RequestForm = () => {
                     )}
                 </select>
                 {errors.activity && <span className="error">{errors.activity}</span>}
+<<<<<<< HEAD
                 <label htmlFor='file'>
               <img src={image==false?upload_area:image} alt="upload-area"   style={{cursor:"pointer"}}/>
             </label>
@@ -250,6 +316,16 @@ const RequestForm = () => {
 />
                 <div className="url-and-not-listed">
                
+=======
+                <div className="url-and-not-listed">
+                  <input
+                    type="text"
+                    name="pastUrl"
+                    placeholder="Past URL (if applicable)"
+                    value={formData.pastUrl}
+                    onChange={handleChange}
+                  />
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
                   <button
                     type="button"
                     className="not-listed-btn"
@@ -319,6 +395,7 @@ const RequestForm = () => {
                   {errors.description && <span className="error">{errors.description}</span>}
                 </div>
               </div>
+<<<<<<< HEAD
               <label htmlFor='file'>
               <img src={upload_area} alt="upload-area"  style={{cursor:"pointer"}}/>
             </label>
@@ -331,6 +408,15 @@ const RequestForm = () => {
   required 
 />
 
+=======
+              <input
+                type="text"
+                name="pastUrl"
+                placeholder="Past URL (if applicable)"
+                value={formData.pastUrl}
+                onChange={handleChange}
+              />
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
               <div className="close">
                 <button type="button" className="close-btn" onClick={resetCustomActivity}>
                   Close

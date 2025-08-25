@@ -1,11 +1,7 @@
 package com.example.student_activity_points.domain;
 
 import jakarta.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "Requests")
@@ -16,15 +12,6 @@ public class Requests {
     @Column(name = "rid")
     private Long rid;
     
-    @Lob
-    @Column(name = "proof", columnDefinition = "LONGBLOB")
-    private byte[] proof;
-    public byte[] getProof() {
-        return proof;
-    }
-    public void setProof(byte[] proof) {
-        this.proof = proof;
-    }
     @Column(unique = true, nullable = false)
     private String sid;  
 
@@ -38,7 +25,7 @@ public class Requests {
     @Column(name = "link")
     private String link;
 
-    @Column(name = "decision_date") 
+    @Column(name = "decison_date") // note: column name "decison_date" as per your existing schema
     private Date decisionDate;
 
     @Column(name = "activity_name")

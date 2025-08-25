@@ -28,11 +28,20 @@ const SideBar = ({role}) => {
             {name:"Request Form",url:"/student/request-form",image:<i class="bi bi-file-earmark-text"></i>},
             {name:"Guidelines",url:"/student/guidelines",image:assets.guidelines},
         ]},
+<<<<<<< HEAD
         {view:"fa",links:[
             {name:"Dashboard",url:"/fa/dashboard",image:assets.dashboard},
             {name:"Approval",url:"/fa/approvals",image:<i class="bi bi-file-check"></i>},
             {name:"Announcements",url:"/fa/announcements",image:<i class="bi bi-megaphone-fill"></i>},
         ]},
+=======
+    {view:"fa",links:[
+      {name:"Dashboard",url:"/fa/dashboard",image:assets.dashboard},
+      // {name:"Manage Activities",url:"/fa/activities",image:assets.activities},
+      {name:"Approval",url:"/fa/approvals",image:<i class="bi bi-file-check"></i>},
+      {name:"Announcements",url:"/fa/announcements",image:<i class="bi bi-megaphone-fill"></i>},
+    ]},
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
        
     ]
   return (

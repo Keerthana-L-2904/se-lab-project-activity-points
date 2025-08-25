@@ -1,3 +1,4 @@
+    // Find all validations for a specific activity (JPQL)
 package com.example.student_activity_points.repository;
 
 import com.example.student_activity_points.domain.Activity;
@@ -11,13 +12,17 @@ import java.util.List;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 
+
 public interface ValidationRepository extends CrudRepository<Validation, Long> {
-    
     // Deletes all validations for a specific activity
     @Transactional
     @Modifying
     @Query("DELETE FROM Validation v WHERE v.activity = :activity")
     void deleteByActivity(@Param("activity") Activity activity);
+
+    // Find all validations for a specific activity (JPQL)
+    @Query("SELECT v FROM Validation v WHERE v.activity = :activity")
+    List<Validation> findByActivity(@Param("activity") Activity activity);
 
     // Corrected method to find Validation by actID and sid
     @Query(value = "SELECT * FROM Validation WHERE actID = ?1 AND SID = ?2", nativeQuery = true)

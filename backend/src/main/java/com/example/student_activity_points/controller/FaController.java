@@ -30,8 +30,7 @@ public class FaController {
     public List<Fa> getAllFacultyAdvisors(){
         return faService.getAllFacultyAdvisors(); // Should return a List
     }
-
-    // 🔥 **NEW: Get Department by ID**
+    
     @GetMapping("/departments/{did}")
     public Optional<Departments> getDepartmentById(@PathVariable Integer did) {
         return departmentService.getDepartmentById((long)did);

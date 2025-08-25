@@ -54,7 +54,9 @@ public class StudentService {
     announcementsRepository.findAll().forEach(announcementsList::add);
     return announcementsList;
     }
+    
     public List<Student> getStudentsByFAID(int FAID) {
     return studentRepository.findByFAID(FAID);
     }
+    
 }

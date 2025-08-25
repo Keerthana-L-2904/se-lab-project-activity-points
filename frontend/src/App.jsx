@@ -30,6 +30,10 @@ import StudentDetails from "./pages/fa/StudentDetails"
 import StudentList from "./pages/fa/StudentList";
 import Announcements_fa from "./pages/fa/Announcements";
 import AnnouncementDetail_fa from "./pages/fa/AnnouncementDetail";
+<<<<<<< HEAD
+=======
+import ManageActivities_fa from "./pages/fa/ManageActivities";
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useContext(AuthContext);
@@ -118,6 +122,10 @@ function App() {
                 >
                     <Route index element={<FaDashboard />} />
                     <Route path="dashboard" element={<FaDashboard />} />
+<<<<<<< HEAD
+=======
+                    <Route path="activities" element={<ManageActivities_fa />} />
+>>>>>>> 023ad54b02c4663b35eab417a91775faf000254b
                     <Route path="approvals" element={<Approvals />} />
                     <Route path="new-announcement" element={<Announcements />} />
                     <Route path="request-form" element={<RequestForm />} />
