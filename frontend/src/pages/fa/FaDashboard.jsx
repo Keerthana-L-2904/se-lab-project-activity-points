@@ -133,7 +133,7 @@ useEffect(() => {
             </div>
             <div className="activity-header">
                 <h2 className="activity-title">Student List</h2>
-                <Link to="/fa/student-list" className="see-all-btn">See All</Link>
+                <Link to="/fa/student-list" className="all-btn">See All</Link>
             </div>
 
             <table className="activity-table">
@@ -150,7 +150,7 @@ useEffect(() => {
                             <tr key={student.sid}>
                                 <td style={{ textTransform: "uppercase" }}>{student.name}</td>
                                 <td>{student.sid}</td>
-                                <td>{student.institutePoints + student.deptPoints}</td>
+                                <td>{student.activityPoints}</td>
                             </tr>
                         ))
                     ) : (

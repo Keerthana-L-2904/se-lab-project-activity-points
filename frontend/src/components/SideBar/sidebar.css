@@ -32,18 +32,9 @@
     color: white;
     text-decoration: none;
 }
-#logout{
-    display: flex;
-    align-items: center;
-    gap:10px;
-    padding-top: 120px;
-    cursor: pointer;
-    opacity: 0.75;
-}
 .shortcut{
     display: flex;
     align-items: center;
-
     list-style: none;
     padding: 10px;
     opacity: 0.75;
@@ -58,4 +49,22 @@ button{
 .shortcut:hover, button:hover{
     opacity: 1;
     font-weight: bold;
+}
+/* Reset button to look like a link */
+#logout button {
+  background: none;     /* remove purple background */
+  border: none;         /* no border */
+  color: white;         /* white text */
+  font: inherit;        /* match font */
+  cursor: pointer;      /* clickable */
+  opacity: 0.75;        /* same as other links */
+  padding: 10px;        /* same spacing as .shortcut */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#logout button:hover {
+  opacity: 1;
+  font-weight: bold;
 }

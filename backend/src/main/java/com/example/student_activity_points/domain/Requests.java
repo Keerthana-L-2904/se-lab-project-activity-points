@@ -40,6 +40,17 @@ public class Requests {
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
+    @Lob
+        @Column(name = "proof", columnDefinition = "LONGBLOB")
+        private byte[] proof;
+
+        public byte[] getProof() {
+            return proof;
+        }
+
+        public void setProof(byte[] proof) {
+            this.proof = proof;
+        }
 
     public enum Status {
         Pending, Approved, Rejected

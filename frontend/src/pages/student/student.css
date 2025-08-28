@@ -9,7 +9,8 @@
     position:absolute;
     top:80px;
     left:15%;
-    width:85vw;
+   
+    
 }
 
 /*tracking*/
@@ -20,6 +21,11 @@
     font-style: normal;
     font-weight: 500;
     font-size: 16px; /* Reduce font size */
+    
+}
+
+.status-filter{
+    display:flex;
 }
 
 .tracking h1 {
@@ -32,12 +38,12 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background-color: #DDD5F3;
-    width: 50vw; /* Reduce width */
-    height: auto; /* Auto height based on content */
+   
+    width: 70vw; /* Reduce width */
+    height: 70vh;
     border-radius: 10px;
     padding: 15px; /* Reduce padding */
-    overflow-y: auto;
+    overflow-y:scroll;
     scrollbar-width: none;
 }
 
@@ -63,26 +69,85 @@
 
 .tracking-items {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+   cursor:pointer;
     background-color: rgba(146, 95, 226, 0.68);
     border-radius: 8px;
     padding: 12px; /* Reduce padding */
 }
+.dates span{
+    font-size: 11px; /* Reduce font size */
+}
 .pending {
     background-color: #FDEFB0;
     color: #AB5200;
+   
 }
 
 .approved {
     background-color: #D4F9C9;
     color: #2F7D32;
+   
 }
 
 .rejected {
     background-color: #F9C9C9;
     color: #D32F2F;
+   
 }
+.status-pending {
+    background-color: #FDEFB0;
+    color: #AB5200;
+    cursor: pointer;
+}
+
+.status-approved {
+    background-color: #D4F9C9;
+    color: #2F7D32;
+    cursor: pointer;
+}
+
+.status-rejected {
+    background-color: #F9C9C9;
+    color: #D32F2F;
+    cursor: pointer;
+}
+.status-filter {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden; /* so corners look neat */
+    border: 1px solid #ccc; /* subtle outline */
+}
+
+.status-filter > div {
+    flex: 1; /* each takes equal width */
+    text-align: center;
+    padding: 12px 0;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Active backgrounds (stronger) */
+.status-pending.active {
+    background-color: #FFD84D;
+    color: #7A3C00;
+    font-weight: 600;
+}
+.status-approved.active {
+    background-color: #6FD671;
+    color: #155724;
+    font-weight: 600;
+}
+.status-rejected.active {
+    background-color: #F17777;
+    color: #7A0B0B;
+    font-weight: 600;
+}
+
+
 /* announcements */
 .announcements {
     margin-top: 30px;
