@@ -2,12 +2,15 @@ package com.example.student_activity_points.controller;
 
 import com.example.student_activity_points.domain.Student;
 import com.example.student_activity_points.domain.StudentActivity;
+import com.example.student_activity_points.dto.StudentWithMandatoryDTO;
 import com.example.student_activity_points.domain.Announcements;
 import com.example.student_activity_points.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+
+
 
 @RestController
 @RequestMapping("/api")
@@ -59,9 +62,38 @@ public class StudentController {
         return studentService.getAnnouncements();
     }
     @GetMapping("/fa/student-list/{FAID}")
-    public List<Student> getStudentsByFAID(@PathVariable int FAID) {
-    return studentService.getStudentsByFAID(FAID);
-}
+    public List<StudentWithMandatoryDTO> getStudentsByFAID(@PathVariable int FAID) {
+        return studentService.getStudentsByFAIDWithMandatoryCount(FAID);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/search")
+    public List<StudentWithMandatoryDTO> searchStudents(
+            @PathVariable int FAID,
+            @RequestParam String name
+    ) {
+        return studentService.searchStudentsByFAIDAndName(FAID, name);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/search-by-mandatory")
+    public List<StudentWithMandatoryDTO> searchByMandatoryCount(
+            @PathVariable int FAID,
+            @RequestParam Long mandatoryCount
+    ) {
+        return studentService.searchStudentsByMandatoryCount(FAID, mandatoryCount);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/sort-by-asc")
+    public List<StudentWithMandatoryDTO> sortByAsc(@PathVariable int FAID) {
+        return studentService.getStudentsByFAIDWithMandatoryCountAsc(FAID);
+    }
+    
+    @GetMapping("fa/student-list/{FAID}/sort-by-desc")
+    public List<StudentWithMandatoryDTO> sortByDesc(@PathVariable int FAID) {
+        return studentService.getStudentsByFAIDWithMandatoryCountDesc(FAID);
+    }
+    
+
+
 
    @GetMapping("/fa/student-details/{sid}")
     public ResponseEntity<?> getStudentBySid(@PathVariable String sid) {
