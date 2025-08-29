@@ -1,22 +1,88 @@
+.search-group{
+  display: flex;
+  align-items: center; 
+}
+.search-group input {
+  flex: 1; 
+  padding: 8px;
+  font-size: 14px;
+}
+.sort-group{
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  margin-left:5%;
+}
+.search-group .vieww-btn {
+  padding: 8px 16px;
+  background-color: #007bff; 
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+th:nth-child(6) {
+  width: 100%;
+}
+
+/* mandatory search box*/
+.mandatory-search {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 8px; 
+  white-space: nowrap; 
+}
+.mandatory-search input {
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+}
+
+.mandatory-search .vieww-btn {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+/* above and below */
+.points-filter {
+  display: flex;
+  gap: 6px; 
+  margin-top: 6px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.points-filter input {
+  width: 60px; 
+  padding: 4px 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
 .list-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;;
+  align-items: center;
   margin-left: 12%;
-  margin-top: 5%;
   padding: 20px;
   font-family: Arial, sans-serif;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
 }
 
 .list-title{
-  margin-top: 20px;
-  font-size: 22px;
+  margin-top: 5%;
+  margin-left:45%;
+  align-items: center;
+  font-size: 25px;
   text-transform: uppercase;
 }
 
 .list-table {
   width: 100%;
+  margin-right:8%;
   border-collapse: collapse;
   margin-top: 10px;
   border: 1px solid #ddd;
@@ -28,6 +94,7 @@
   padding: 10px;
   text-align: center;
   border-radius: 10px;
+  width: max-content;
 }
 
 .list-table th {

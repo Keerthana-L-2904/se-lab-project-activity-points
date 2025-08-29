@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Service
@@ -36,7 +37,7 @@ public class TrackingService {
             rd.setStatus(r.getStatus().name());   // enum -> string
             rd.setType(r.getType().name());       // enum -> string
             return rd;
-        }).toList();
+        }).collect(Collectors.toList());
 
         // Map Activities
         List<TrackingDTO.ActivityDTO> actDtos = activities.stream().map(a -> {
@@ -48,7 +49,7 @@ public class TrackingService {
             ad.setPoints(a.getPoints());
             ad.setActivityType(a.getActivityType());
             return ad;
-        }).toList();
+        }).collect(Collectors.toList());
 
         dto.setRequests(reqDtos);
         dto.setActivities(actDtos);

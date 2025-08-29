@@ -1,7 +1,6 @@
 package com.example.student_activity_points.domain;
 
 import jakarta.persistence.*;
-
 import java.util.Date;
 @Entity
 @Table(name="Fa")
@@ -17,6 +16,9 @@ public class Fa {
     @Column(name="emailID", nullable=false,unique=true)
     private String emailID; 
 
+    @ManyToOne
+    @JoinColumn(name = "DID", referencedColumnName = "DID", insertable = false, updatable = false)
+    private Departments department;
 
     @Column(name="DID", nullable=false,length=255)
     private int DID;
@@ -33,5 +35,8 @@ public class Fa {
 
     public int getDID() { return DID; }
     public void setDID(int did) { this.DID = did; }
+    
+    public Departments getDepartment() { return department; }
+    public void setDepartment(Departments department) { this.department = department; }
 
 }

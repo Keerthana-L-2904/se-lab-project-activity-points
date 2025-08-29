@@ -61,9 +61,12 @@ table{
 }
 
 .styled-table th, .styled-table td {
-    padding: 12px;
+    padding: 16px;
     border-bottom: 1px solid #ddd;
 }
+    .styled-table th{
+    background-color:  #925FE2;
+    }
 
 .styled-table thead {
     background-color: #925FE2;

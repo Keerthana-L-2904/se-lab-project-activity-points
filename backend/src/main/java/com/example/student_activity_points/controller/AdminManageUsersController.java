@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import com.example.student_activity_points.repository.DepartmentsRepository;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,10 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.student_activity_points.domain.Activity;
+import com.example.student_activity_points.domain.Departments;
 import com.example.student_activity_points.domain.Fa;
 import com.example.student_activity_points.domain.Student;
 import com.example.student_activity_points.repository.FARepository;
 import com.example.student_activity_points.repository.StudentRepository;
+
 
 @RestController
 @RequestMapping("/api/admin/manage-users")
@@ -38,6 +43,10 @@ public class AdminManageUsersController {
 
     @Autowired
     private FARepository faRepository;
+    
+    @Autowired
+    private DepartmentsRepository deptRepository;
+
 
     @GetMapping("/student")
      public ResponseEntity<?> getStudents() {
@@ -78,6 +87,7 @@ public class AdminManageUsersController {
             System.out.println("DID: " + student.getDid());
             System.out.println("Dept points: " + student.getDeptPoints());
             System.out.println("Inst points: " + student.getInstitutePoints());
+            System.out.println("Other points: " + student.getOtherPoints());
             System.out.println("EmailID: " + student.getEmailID());
 
 
@@ -132,8 +142,6 @@ public class AdminManageUsersController {
             return ResponseEntity.status(500).body("Error uploading students: " + e.getMessage());
         }
     }
-
-
     @PostMapping ("/fa")
     public ResponseEntity<?> addFA(@RequestBody Fa fa) {
         try {
@@ -319,8 +327,14 @@ public ResponseEntity<?> updateFA(@PathVariable Long id, @RequestBody Fa updated
         }
     }
 
-
-
+        @GetMapping("/fas/filter")
+        public ResponseEntity<?> getFasByDept(@RequestParam String deptName) {
+            List<Fa> fas = faRepository.findByDepartment_Name(deptName);
+            if (fas.isEmpty()) {
+                return ResponseEntity.status(404).body("No FAs found for dept " + deptName);
+            }
+            return ResponseEntity.ok(fas);
+        }
 
     @GetMapping("/students/filter")
     public ResponseEntity<?> getStudentsByDeptAndYear(

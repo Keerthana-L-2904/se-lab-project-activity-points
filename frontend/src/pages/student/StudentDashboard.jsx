@@ -82,7 +82,7 @@ const StudentDashboard = () => {
             {/* Latest Activity Section */}
             <div className="activity-header">
                 <h2 className="activity-title">Activity History</h2>
-                <Link to="/student/activity-history" className="see-all-btn">See All</Link>
+                <Link to="/student/activity-history" className="see-all-btnn">See All</Link>
             </div>
             <table className="activity-table">
                 <thead>
@@ -112,7 +112,7 @@ const StudentDashboard = () => {
             {/* Announcements Section */}
             <div className="announcement-header">
                 <h2 className="announcement-title">Announcements</h2>
-                <Link to={`/student/announcements`} className="see-all-btn">See All</Link>
+                <Link to={`/student/announcements`} className="see-all-btnn">See All</Link>
             </div>
             <table className="announcement-table">
                 <thead>

@@ -1,8 +1,12 @@
--- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
---
--- Host: localhost    Database: student_activity_points
--- ------------------------------------------------------
--- Server version	8.0.36
+use student_activity_points;
+select * from student_activity;
+select * from activity;
+select * from student;
+SELECT dept_points, institute_points, other_points, activity_points FROM student WHERE sid = 'B220038CS';
+
+show tables;
+
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -184,9 +188,7 @@ INSERT INTO `guidelines` VALUES (2,'Students must read the guidelines pdf provid
 /*!40000 ALTER TABLE `guidelines` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `requests`
---
+
 
 DROP TABLE IF EXISTS `requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -219,23 +221,18 @@ INSERT INTO `requests` VALUES (1,'B220584CS','2024-12-01 00:00:00.000000','Appro
 /*!40000 ALTER TABLE `requests` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `student`
---
-
+-- Drop table if it already exists
 DROP TABLE IF EXISTS `student`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `student` (
   `SID` varchar(255) NOT NULL,
   `FAID` int NOT NULL,
   `emailID` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `DID` int NOT NULL,
-  `dept_points` int DEFAULT '0',
-  `institute_points` int DEFAULT '0',
-  `other_points` int DEFAULT '0',
-  `activity_points` int DEFAULT '0',
+  `dept_points` int DEFAULT 0,
+  `institute_points` int DEFAULT 0,
+  `other_points` int DEFAULT 0,
+  `activity_points` int GENERATED ALWAYS AS (`dept_points` + `institute_points` + `other_points`) STORED,
   PRIMARY KEY (`SID`),
   UNIQUE KEY `emailID` (`emailID`),
   KEY `FAID` (`FAID`),
@@ -243,17 +240,13 @@ CREATE TABLE `student` (
   CONSTRAINT `student_ibfk_1` FOREIGN KEY (`FAID`) REFERENCES `fa` (`FAID`),
   CONSTRAINT `student_ibfk_2` FOREIGN KEY (`DID`) REFERENCES `departments` (`DID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `student`
---
-
-LOCK TABLES `student` WRITE;
-/*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES ('B220038CS',3,'keerthana_b220038cs@nitc.ac.in','Keerthana',1,23,40,0,0),('B220078EC',1,'keer@nitc.ac.in','kkkekeke',1,14,25,0,0),('B220448CS',1,'berty@gmail.com','berty',1,11,16,0,0),('B220584CS',3,'vedavijayshankar.xia6@gmail.com','Veda Vijay Shankar',1,10,20,0,0);
-/*!40000 ALTER TABLE `student` ENABLE KEYS */;
-UNLOCK TABLES;
+-- Insert data (DO NOT include activity_points because it's calculated automatically)
+INSERT INTO `student` (`SID`, `FAID`, `emailID`, `name`, `DID`, `dept_points`, `institute_points`, `other_points`) VALUES
+('B220038CS', 3, 'keerthana_b220038cs@nitc.ac.in', 'Keerthana', 1, 23, 40, 0),
+('B220078EC', 1, 'keer@nitc.ac.in', 'kkkekeke', 1, 14, 25, 0),
+('B220448CS', 1, 'berty@gmail.com', 'berty', 1, 11, 16, 0),
+('B220584CS', 3, 'vedavijayshankar.xia6@gmail.com', 'Veda Vijay Shankar', 1, 10, 20, 0);
 
 --
 -- Table structure for table `student_activity`
@@ -286,40 +279,3 @@ LOCK TABLES `student_activity` WRITE;
 INSERT INTO `student_activity` VALUES (4,'B220038CS','2025-04-05 11:47:44.264000','Department',4,'Indian Consititution','www.example.com'),(4,'B220584CS','2023-02-13 00:00:00.000000','Department',3,'indian constitution','https://docs.google.com/document/d/1jnaaD7Lyo85oa40Rc4BOyAlEg2ZVcuZrVkZLvV1i9c0/edit?tab=t.0'),(15,'B220038CS','2025-04-06 19:10:22.676000','Institute',4,'Volunteering','www.example.com');
 /*!40000 ALTER TABLE `student_activity` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `validation`
---
-
-DROP TABLE IF EXISTS `validation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `validation` (
-  `vid` bigint NOT NULL AUTO_INCREMENT,
-  `sid` varchar(255) NOT NULL,
-  `upload_date` datetime(6) NOT NULL,
-  `validated` enum('No','Yes','Pending') NOT NULL,
-  `actid` bigint NOT NULL,
-  PRIMARY KEY (`vid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `validation`
---
-
-LOCK TABLES `validation` WRITE;
-/*!40000 ALTER TABLE `validation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `validation` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-08-24 22:39:40

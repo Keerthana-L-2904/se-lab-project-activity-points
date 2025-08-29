@@ -123,7 +123,7 @@
     align-items: center;
 }
 
-.see-all-btn {
+.see-all-btnn {
     color: black;
     padding: 8px 16px;
     border-radius: 5px;
@@ -131,10 +131,9 @@
     font-weight: bold;
 }
 
-.see-all-btn:hover {
+.see-all-btnn:hover {
     color: #0056b3;
 }
-
 .announcement-header {
     display: flex;
     justify-content: space-between;

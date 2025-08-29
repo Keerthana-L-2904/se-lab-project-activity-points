@@ -1,0 +1,141 @@
+/*usermanagement */
+  .management-container {
+  padding: 20px;
+  max-width: 1100px;
+  margin-top:5%;
+  margin-left: 20%;
+  font-family: Arial, sans-serif;
+}
+.upload-wrapper {
+  display: flex;
+  justify-content: center;  /* center both sections horizontally */
+  gap: 50px;            /* spacing between Students and FAs */
+  margin-bottom: 20px;
+  margin-left: 13%;
+}
+
+.upload-icon {
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.upload-section button {
+  margin-top: 10px;
+}
+.upload-section-container {
+  display: flex;
+  gap: 30px; /* space between buttons and upload wrapper */
+  align-items: flex-start;
+}
+
+.upload-section input[type="file"] {
+  margin-right: 10px;
+}
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; /* space between elements inside each section */
+  margin: 0 30px; /* spacing between student & FA sections */
+}
+button {
+  background-color: #5918c2;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.see-all-btn {
+  background-color: #0147f9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px; 
+  flex-direction: column;
+}
+.see-all-btn:hover {
+  opacity: 0.9;
+  font-weight: bold;
+  background-color: #1258a2;
+}
+
+.see-all-column {
+  display: flex;
+  flex-direction: column; /* stack buttons vertically */
+  gap: 10px; /* space between FA and Student buttons */
+}
+
+
+
+
+.edit-btn {
+  background: #7c3aed; /* purple */
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 6px; /* 👈 adds space below Edit button */
+}
+
+.delete-btn {
+  background: #7c3aed;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #6430b9;
+}
+
+.filter-section {
+  margin-bottom: 15px;
+}
+
+.filter-section input {
+  margin-right: 10px;
+  padding: 6px;
+}
+
+.table-container {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+table {
+  width:100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #f4f4f4;
+}
+
+.pagination {
+  display: flex;
+  gap: 5px;
+}
+
+.pagination button {
+  padding: 6px 10px;
+  background-color: #e0e0e0;
+}
+
+.pagination button.active {
+  background-color: rgb(174, 174, 175);
+  color: white;
+}

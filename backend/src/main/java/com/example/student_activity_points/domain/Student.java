@@ -33,8 +33,12 @@ public class Student {
 
     @Column(name = "institute_points", columnDefinition = "INT DEFAULT 0")
     private int institutePoints;
-    @Column(name = "activity_points", columnDefinition = "INT DEFAULT 0") // Add this line
-    private int activityPoints; // Add this field
+    @Column(name = "activity_points", insertable = false, updatable = false)
+    private Integer activityPoints;
+
+
+    @Column(name = "other_points", columnDefinition = "INT DEFAULT 0") // ✅ new field
+    private int otherPoints;
 
     public String getSid() {
         return sid;
@@ -93,7 +97,13 @@ public class Student {
         this.institutePoints = institutePoints;
     }
     
-    // Getter and Setter for activityPoints
+    public int getOtherPoints() {
+        return otherPoints;
+    }
+
+    public void setOtherPoints(int otherPoints) {
+        this.otherPoints = otherPoints;
+    }
     public int getActivityPoints() {
         return activityPoints;
     }

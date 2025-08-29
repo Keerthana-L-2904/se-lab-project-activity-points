@@ -91,8 +91,56 @@ public class StudentController {
     public List<StudentWithMandatoryDTO> sortByDesc(@PathVariable int FAID) {
         return studentService.getStudentsByFAIDWithMandatoryCountDesc(FAID);
     }
-    
 
+    @GetMapping("fa/student-list/{FAID}/filter-dept-points-above")
+    public List<StudentWithMandatoryDTO> filterDeptPointsAbove(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterDeptPointsAbove(FAID, points);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/filter-dept-points-below")
+    public List<StudentWithMandatoryDTO> filterDeptPointsBelow(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterDeptPointsBelow(FAID, points);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/filter-inst-points-above")
+    public List<StudentWithMandatoryDTO> filterInstPointsAbove(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterInstPointsAbove(FAID, points);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/filter-inst-points-below")
+    public List<StudentWithMandatoryDTO> filterInstPointsBelow(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterInstPointsBelow(FAID, points);
+    }
+
+    // Activity Points - Above
+    @GetMapping("fa/student-list/{FAID}/filter-activity-points-above")
+    public List<StudentWithMandatoryDTO> filterActivityPointsAbove(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterActivityPointsAbove(FAID, points);
+    }
+
+    // Activity Points - Below
+    @GetMapping("fa/student-list/{FAID}/filter-activity-points-below")
+    public List<StudentWithMandatoryDTO> filterActivityPointsBelow(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterActivityPointsBelow(FAID, points);
+    }
 
 
    @GetMapping("/fa/student-details/{sid}")

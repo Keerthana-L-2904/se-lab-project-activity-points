@@ -1,434 +1,338 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './admin.css';
-import {handleAddStudent,handleAddFA,handleEditStud,handleEditFa,getDeptData,handleDeleteStud,handleDeleteFa} from '../../handlers/UserManagement';
+import React, { useState } from "react";
+import axios from "axios";
+import "./manage.css";
+import { PiStudent } from "react-icons/pi";
+import { GiTeacher } from "react-icons/gi";
 
-
-
-const ManageUsers = () => {
-  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
-  const [isFAModalOpen, setIsFAModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editData, setEditData] = useState(null);
+const UserManagement = () => {
   const [students, setStudents] = useState([]);
-  const [faculties, setFaculties] = useState([]);
-  const [departments,setDepartments]=useState([]);
-  const [rollNoError, setRollNoError] = useState(""); // Store error message
-  const [searchStudent, setSearchStudent] = useState(""); // 🔍 Student search query
-  const [searchFA, setSearchFA] = useState(""); // 🔍 FA search query
-  const [student,newStudent]=useState({
-    sid: "",  // ✅ Backend expects this, but form sends rollNo
-    name: "",
-    emailID: "",
-    faid: "",
-    did: "",
-    deptPoints: "",
-    institutePoints: "",
-  });
-  const [faculty,newFaculty]=useState({
-    name:'',
-    did:'',
-    emailID:''
-  });
+  const [fas, setFas] = useState([]);
+  const [file, setFile] = useState(null);
+  const [faFile, setFaFile] = useState(null);
+  const [filterYear, setFilterYear] = useState("");
+  const [filterDept, setFilterDept] = useState("");
+  const [filterDeptFa, setFilterDeptFa] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [view, setView] = useState(""); // "students" | "fas" | ""
 
-  useEffect(() => {
-    fetchStudData();
-    fetchFAData();
-    getDeptData(setDepartments);
-  }, []);
+  const itemsPerPage = 10;
 
-  const handleRollNoChange = (e) => {
-    const enteredRollNo = e.target.value.toUpperCase();
-    newStudent({ ...student, sid: enteredRollNo });
-  
-    // Check length
-    if (enteredRollNo.length !== 9) {
-      setRollNoError("Roll No must be 9 characters long");
-      return;
-    } 
-  
-    // Check if roll number already exists
-    const rollNoExists = students.some(stud => stud.sid === enteredRollNo.toUpperCase());
-    if (rollNoExists) {
-      setRollNoError("Roll No already exists");
-      return;
+  // file upload
+  const handleStudentFileChange = (e) => setFile(e.target.files[0]);
+  const handleFaFileChange = (e) => setFaFile(e.target.files[0]);
+
+  const uploadStudents = async () => {
+    if (!file) return alert("Please select a student Excel file.");
+    const formData = new FormData();
+    formData.append("file", file);
+    setLoading(true);
+    try {
+      await axios.post("/api/admin/manage-users/upload-students", formData);
+      alert("Students uploaded successfully ✅");
+      setFile(null);
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading student file ❌");
+    } finally {
+      setLoading(false);
     }
-  
-    // No errors
-    setRollNoError("");
   };
 
+  const uploadFas = async () => {
+    if (!faFile) return alert("Please select a FA Excel file.");
+    const formData = new FormData();
+    formData.append("file", faFile);
+    setLoading(true);
+    try {
+      await axios.post("/api/admin/manage-users/upload-fas", formData);
+      alert("FAs uploaded successfully ✅");
+      setFaFile(null);
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading FA file ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
-  const fetchStudData = async () => {
+  // fetch lists
+  const fetchStudents = async () => {
     try {
       const response = await axios.get("/api/admin/manage-users/student");
-      if (response.status === 200) {
-        setStudents(response.data);
-      } else {
-        alert('Error loading student info!');
-      }
-    } catch (error) {
-      console.error('Error fetching student info', error);
-      alert('Failed to fetch student info');
+      setStudents(response.data);
+      setView("students");
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching students ❌");
     }
   };
-  const fetchFAData = async () => {
+
+  const fetchFas = async () => {
     try {
       const response = await axios.get("/api/admin/manage-users/fa");
-      if (response.status === 200) {
-        setFaculties(response.data);
-      } else {
-        alert('Error loading fa info!');
-      }
-    } catch (error) {
-      console.error('Error fetching fa info', error);
-      alert('Failed to fetch fa info');
+      setFas(response.data);
+      setView("fas");
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching FAs ❌");
     }
   };
 
-  const handleDelete = (type, index) => {
-    if (type === 'student') {
-      setStudents(students.filter((_, i) => i !== index));
-    } else {
-      setFaculties(faculties.filter((_, i) => i !== index));
-
+  // delete actions
+  const deleteStudent = async (sid) => {
+    if (!window.confirm("Are you sure you want to delete this student?")) return;
+    try {
+      await axios.delete(`/api/admin/manage-users/student/${sid}`);
+      setStudents(students.filter((s) => s.sid !== sid));
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting student ❌");
     }
   };
 
-  const handleEdit = (type, index) => {
-    if (type === 'student') {
-        setEditData({ ...students[index], type, index });
-    } else {
-        setEditData({ ...faculties[index], type, index });
+  const deleteFa = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this FA?")) return;
+    try {
+      await axios.delete(`/api/admin/manage-users/fa/${id}`);
+      setFas(fas.filter((f) => f.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting FA ❌");
     }
-    setIsEditModalOpen(true);
+  };
+
+  // bulk delete students
+  const bulkDeleteStudents = async () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".xlsx,.xls";
+
+  fileInput.onchange = async (e) => {
+    const deleteFile = e.target.files[0];
+    if (!deleteFile) return;
+
+    const formData = new FormData();
+    formData.append("file", deleteFile);
+
+    try {
+      await axios.post("/api/admin/manage-users/students/bulk-delete", formData);
+      alert("Bulk delete successful ✅");
+      fetchStudents(); // refresh list
+    } catch (err) {
+      console.error(err);
+      alert("Error during bulk delete ❌");
+    }
+  };
+
+  // directly trigger file picker
+  fileInput.click();
 };
 
-// 🔍 Filter students based on search query
-const filteredStudents = students.filter(student =>
-  student.name.toLowerCase().includes(searchStudent.toLowerCase())
-);
+  // filters
+  const filteredStudents = students.filter((s) => {
+    const yearMatch = filterYear ? s.sid.substring(1, 3) === filterYear : true;
+    const deptMatch = filterDept
+      ? s.sid.substring(s.sid.length - 2).toUpperCase() === filterDept.toUpperCase()
+      : true;
+    return yearMatch && deptMatch;
+  });
 
-// 🔍 Filter faculty advisors based on search query
-const filteredFaculties = faculties.filter(fa =>
-  fa.name.toLowerCase().includes(searchFA.toLowerCase())
-);
+  const filteredFas = fas.filter((fa) => {
+    return filterDeptFa ? fa.did.toString() === filterDeptFa : true;
+  });
+
+  const paginatedStudents = filteredStudents.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
   return (
-    <div>
-      <div className="content">
-        <div className="header">
-          <h1>User Management</h1>
+    <div className="management-container">
+      <h2 style={{ textTransform: "uppercase", textAlign: "center" }}>Admin - Manage Users</h2>
+      <br></br>
+
+    <div className="upload-section-container">
+      {/* See All Buttons Column */}
+      <div className="see-all-column">
+        <button onClick={fetchFas} className="see-all-btn" style={{color:"white"}}>See All FAs</button>
+        <button onClick={fetchStudents} className="see-all-btn"style={{color:"white"}}>See All Students</button>
+      </div>
+
+      {/* Upload Wrapper */}
+      <div className="upload-wrapper">
+        {/* Upload Students */}
+        <div className="upload-section">
+          <label htmlFor="student-file">
+            <PiStudent className="upload-icon" size={50} />
+          </label>
+          <input
+            type="file"
+            id="student-file"
+            accept=".xlsx, .xls"
+            onChange={handleStudentFileChange}
+            hidden
+          />
+          {file && <p className="file-name">{file.name}</p>}
+          <button onClick={uploadStudents} disabled={!file || loading}>
+            {loading ? "Uploading..." : "Upload Students File"}
+          </button>
         </div>
-        <div className="body">
-          <div className="student-management">
-            <h2>Student Management</h2>
-            <div className="search-add">
-              <div className="search">
-                <label>Search by name:</label>
-                <input type="text" name="search-name" placeholder="Enter student name" value={searchStudent}
-                  onChange={(e) => setSearchStudent(e.target.value)}/>
-              </div>
-              <button className="Add" onClick={() => setIsStudentModalOpen(true)}>
-                Add Student
-              </button>
-            </div>
-            <table className="styled-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Roll No</th>
-                  <th>Department</th>
-                  <th>Email ID</th>
-                  <th>Faculty Advisor</th>
-                  <th>Institute points</th>
-                  <th>Dept points</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map((student, index) => (
-                  <tr key={index}>
-                    <td>{student.name}</td>
-                    <td>{student.sid}</td>
-                    {departments.filter(dept => dept.did===student.did).map(dept => (
-                  <td>{dept.name}</td>
-                ))}
-                    <td>{student.emailID}</td>
-                    {/* <td>{student.faid}</td> */}
-                    {!student.faid && <td>Not assigned</td>}
-                    {student.faid && faculties.filter(fa => fa.faid===student.faid).map(fa => (
-                  <td>{fa.name}</td>
-                ))}
-                    <td>{student.institutePoints}</td>
-                    <td>{student.deptPoints}</td>
-                    <td>
-                      <i className="bi bi-pencil-fill" onClick={() => handleEdit('student', index)}></i>
-                      <i className="bi bi-trash-fill" onClick={() => handleDeleteStud(fetchStudData,student.sid)}></i>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+        {/* Upload FAs */}
+        <div className="upload-section">
+          <label htmlFor="fa-file">
+            <GiTeacher className="upload-icon" size={50} />
+          </label>
+          <input
+            type="file"
+            id="fa-file"
+            accept=".xlsx, .xls"
+            onChange={handleFaFileChange}
+            hidden
+          />
+          {faFile && <p className="file-name">{faFile.name}</p>}
+          <button onClick={uploadFas} disabled={!faFile || loading}>
+            {loading ? "Uploading..." : "Upload FA file"}
+          </button>
+        </div>
+      </div>
+    </div>
+
+      <hr />
+
+      {/* Student Section */}
+      {view === "students" && (
+        <div>
+          <div className="filter-section">
+            <br></br>
+            <input
+              type="text"
+              placeholder="Enter Year (e.g., 22)"
+              value={filterYear}
+              onChange={(e) => setFilterYear(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Enter Dept (e.g., CS)"
+              value={filterDept}
+              onChange={(e) => setFilterDept(e.target.value)}
+            />
+            <button onClick={bulkDeleteStudents} className="bulk-delete-btn">
+              Bulk Delete Students
+            </button>
           </div>
 
-          <div className="fa-management">
-            <h2>FA Management</h2>
-            <div className="search-add">
-              <div className="search">
-                <label>Search by name:</label>
-                <input type="text" name="search-name" placeholder="Enter FA name" value={searchFA}
-                  onChange={(e) => setSearchFA(e.target.value)}/>
-              </div>
-              <button className="Add" onClick={() => setIsFAModalOpen(true)}>
-                Add FA
-              </button>
-            </div>
-            <table className="styled-table">
+          <div className="table-container">
+            <h3>Student List</h3>
+            <table>
               <thead>
                 <tr>
+                  <th>SID</th>
                   <th>Name</th>
-                  <th>Faculty ID</th>
-                  <th>Department</th>
                   <th>Email</th>
+                  <th>Dept Points</th>
+                  <th>Institute Points</th>
+                  <th>Other Points</th>
+                  <th>Total Points</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredFaculties.map((fa, index) => (
-                  <tr key={index}>
-                    <td>{fa.name}</td>
-                    <td>{fa.faid}</td>
-                    {departments.filter(dept => dept.did===fa.did).map(dept => (
-                  <td>{dept.name}</td>
-                ))}
-                    <td>{fa.emailID}</td>
+                {paginatedStudents.map((student) => (
+                  <tr key={student.sid}>
+                    <td>{student.sid}</td>
+                    <td>{student.name}</td>
+                    <td>{student.emailID}</td>
+                    <td>{student.deptPoints}</td>
+                    <td>{student.institutePoints}</td>
+                    <td>{student.otherPoints}</td>
+                    <td>{student.activityPoints}</td>
                     <td>
-                      <i className="bi bi-pencil-fill" onClick={() => handleEdit('fa', index)}></i>
-                      <i className="bi bi-trash-fill" onClick={() => handleDeleteFa(fetchFAData,index)}></i>
+                      <button className="edit-btn">Edit</button>
+                      <br></br>
+                      <button
+                        className="delete-btn"
+                        onClick={() => deleteStudent(student.sid)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
+            {/* Page-shift */}
+            <div className="pagination">
+              {Array.from(
+                { length: Math.ceil(filteredStudents.length / itemsPerPage) },
+                (_, index) => (
+                  <button
+                    key={index}
+                    className={page === index + 1 ? "active" : ""}
+                    onClick={() => setPage(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                )
+              )}
+            </div>
           </div>
         </div>
-      </div>
-
-      {isFAModalOpen && (
-  <div className="modal-overlay" onClick={() => setIsFAModalOpen(false)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <div className="title">
-        <h2>Add FA</h2>
-        <span className="close" onClick={() => setIsFAModalOpen(false)}>x</span>
-      </div>
-
-      <div className="input-group">
-        <label>Name:</label>
-        <input 
-          type="text" 
-          placeholder="Enter FA name" 
-          value={faculty.name || ""} 
-          onChange={(e) => newFaculty({ ...faculty, name: e.target.value })} 
-        />
-      </div>
-
-      <div className="input-group">
-        <label>Email:</label>
-        <input 
-          type="email" 
-          placeholder="Enter email"  
-          value={faculty.emailID || ""} 
-          onChange={(e) => newFaculty({ ...faculty, emailID: e.target.value })} 
-        />
-      </div>
-
-      <div className="input-group">
-        <label>Department:</label>
-        <select value={faculty.did} onChange={(e) => newFaculty({...faculty, did: e.target.value})}>
-              <option value="">Select Department</option>
-              {departments.map(dept => (
-                <option key={dept.did} value={dept.did}>{dept.name}</option>
-              ))}
-            </select>
-      </div>
-
-      <button 
-        className="submit-btn" 
-        onClick={() => handleAddFA(fetchFAData, setIsFAModalOpen, newFaculty, faculty)}
-      >
-        Submit
-      </button>
-    </div>
-  </div>
-)}
-
-
-{isStudentModalOpen && (
-  <div className="modal-overlay" onClick={() => setIsStudentModalOpen(false)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <div className="title">
-        <h2>Add Student</h2>
-        <span className="close" onClick={() => setIsStudentModalOpen(false)}>x</span>
-      </div>
-
-      <div className='input-group'>
-        <label>Name:</label>
-        <input 
-          type="text" 
-          placeholder="Enter name" 
-          value={student.name || ""} 
-          onChange={(e) => newStudent({ ...student, name: e.target.value })} 
-        />
-      </div>
-
-      <div className="input-group">
-  <label>Roll No:</label>
-  <input 
-    type="text" 
-    placeholder="Enter Roll No"
-    value={student.sid || ""} 
-    onChange={handleRollNoChange}
-    className={rollNoError ? "input-error" : ""} // Add class if there's an error
-  />
-  {rollNoError && <p className="error-message">{rollNoError}</p>} {/* Show error message */}
-</div>
-
-
-      <div className='input-group'>
-        <label>Email:</label>
-        <input 
-          type="email" 
-          placeholder="Enter email" 
-          value={student.emailID || ""} 
-          onChange={(e) => newStudent({ ...student, emailID: e.target.value })} 
-        />
-      </div>
-
-      <div className='input-group'>
-        <label>Department:</label>
-        <select value={student.did} onChange={(e) => newStudent({...student ,did: e.target.value})}>
-              <option value="">Select Department</option>
-              {departments.map(dept => (
-                <option key={dept.did} value={dept.did}>{dept.name}</option>
-              ))}
-            </select>
-      </div>
-
-      <div className='input-group'>
-  <label>FA In-Charge:</label>
-  <select value={student.faid} onChange={(e) => newStudent({ ...student, faid: e.target.value })}>
-    <option value="">Select FA</option>
-    {faculties.map(fa => (
-      <option key={fa.faid} value={fa.faid}>{fa.name}</option>
-    ))}
-  </select>
-</div>
-
-      <div className='input-group'>
-      <label>Institute points:</label>
-        <input 
-          type="number" 
-          placeholder="Enter institute points" 
-          value={student.institutePoints || ""} 
-          onChange={(e) => newStudent({ ...student,  institutePoints: e.target.value })} 
-        />
-      </div>
-
-      <div className='input-group'>
-        <label>Department points:</label>
-        <input 
-          type="number" 
-          placeholder="Enter dept points" 
-          value={student.deptPoints || ""} 
-          onChange={(e) => newStudent({ ...student, deptPoints: e.target.value })} 
-        />
-      </div>
-
-      <button 
-        className="submit-btn" 
-        onClick={() => handleAddStudent(fetchStudData, setIsStudentModalOpen, newStudent, student)}
-      >
-        Submit
-      </button>
-    </div>
-  </div>
-)}
-
-
-{isEditModalOpen && (
-  <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <div className="title">
-        <h2>Edit {editData.type === 'student' ? 'Student' : 'FA'}</h2>
-        <span className="close" onClick={() => setIsEditModalOpen(false)}>x</span>
-      </div>
-
-      <div className='input-group'>
-        <label>Name:</label>
-        <input 
-          type="text" 
-          value={editData.name || ''} 
-          onChange={(e) => setEditData({ ...editData, name: e.target.value })} 
-        />
-      </div>
-
-      <div className='input-group'>
-        <label>Email:</label>
-        <input 
-          type="email" 
-          value={editData.emailID || ''} 
-          onChange={(e) => setEditData({ ...editData, emailID: e.target.value })} 
-        />
-      </div>
-
-      <div className='input-group'>
-        <label>Department:</label>
-        <select value={editData.did} onChange={(e) => newStudent({...editData ,did: e.target.value})}>
-              <option value="">Select Department</option>
-              {departments.map(dept => (
-                <option key={dept.did} value={dept.did}>{dept.name}</option>
-              ))}
-            </select>
-      </div>
-
-      {editData.type === 'student' && (
-        <div className='input-group'>
-        <label>FA In-Charge:</label>
-        <select value={editData.faid} onChange={(e) => setEditData({ ...editData, faid: e.target.value })}>
-          <option value="">Select FA</option>
-          {faculties.map(fa => (
-            <option key={fa.faid} value={fa.faid}>{fa.name}</option>
-          ))}
-        </select>
-      </div>
       )}
-<button 
-  className="submit-btn" 
-  onClick={() => editData.type === 'student' 
-    ? handleEditStud(fetchStudData,setIsEditModalOpen,editData) 
-    : handleEditFa(fetchFAData,setIsEditModalOpen,editData)}
->
-  Submit
-</button>
+
+{/* FAs Section */}
+{view === "fas" && (
+  <div>
+    <br></br>
+    <div className="filter-section">
+      <input
+        type="text"
+        placeholder="Enter Dept ID"
+        value={filterDeptFa}
+        onChange={(e) => setFilterDeptFa(e.target.value)}
+      />
+    </div>
+
+    <div className="table-container">
+      <h3>FA List</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>DID</th>
+            <th>DepName</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredFas.map((fa) => (
+            <tr key={fa.id}>
+              <td>{fa.name}</td>
+              <td>{fa.emailID}</td>
+              <td>{fa.did}</td>
+              <td>{fa.department?.name}</td>
+              <td>
+                <button className="edit-btn">Edit</button>
+                <br></br>
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteFa(fa.id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   </div>
-)}
-
-
+  )}
     </div>
   );
 };
 
-
-
-export default ManageUsers;
-
-// const [students, setStudents] = useState([
-  //   { name: 'Alice Johnson', rollNo: 'B220101', department: 'CSE', email: 'alice@example.com', facultyAdvisor: 'Dr. Smith' },
-  // ]);
-  // const [faculty, setFaculty] = useState([
-  //   { name: 'Dr. Emily White', facultyId: 'FA1001', department: 'CSE', email: 'emily@example.com' },
-  // ]);
-
+export default UserManagement;

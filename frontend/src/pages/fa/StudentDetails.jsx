@@ -58,7 +58,7 @@ const StudentDetails = () => {
               <p>Total Institutional Points</p>
             </div>
             <div className="point-box">
-              <h4 style={{ fontSize: "40px", color: "#6f42c1" }}>{student.deptPoints + student.institutePoints}</h4>
+              <h4 style={{ fontSize: "40px", color: "#6f42c1" }}>{student.activityPoints}</h4>
               <p>Total Activity Points</p>
             </div>
           </div>
