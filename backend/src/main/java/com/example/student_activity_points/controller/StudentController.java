@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
+
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173") // Adjust based on frontend URL
@@ -60,11 +62,11 @@ public class StudentController {
         return studentService.getAnnouncements();
     }
     @GetMapping("/fa/student-list/{FAID}")
-    public List<Student> getStudentsByFAID(@PathVariable int FAID) {
-    return studentService.getStudentsByFAID(FAID);
-}
-    
-@GetMapping("fa/student-list/{FAID}/search")
+    public List<StudentWithMandatoryDTO> getStudentsByFAID(@PathVariable int FAID) {
+        return studentService.getStudentsByFAIDWithMandatoryCount(FAID);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/search")
     public List<StudentWithMandatoryDTO> searchStudents(
             @PathVariable int FAID,
             @RequestParam String name
@@ -89,6 +91,58 @@ public class StudentController {
     public List<StudentWithMandatoryDTO> sortByDesc(@PathVariable int FAID) {
         return studentService.getStudentsByFAIDWithMandatoryCountDesc(FAID);
     }
+
+    @GetMapping("fa/student-list/{FAID}/filter-dept-points-above")
+    public List<StudentWithMandatoryDTO> filterDeptPointsAbove(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterDeptPointsAbove(FAID, points);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/filter-dept-points-below")
+    public List<StudentWithMandatoryDTO> filterDeptPointsBelow(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterDeptPointsBelow(FAID, points);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/filter-inst-points-above")
+    public List<StudentWithMandatoryDTO> filterInstPointsAbove(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterInstPointsAbove(FAID, points);
+    }
+
+    @GetMapping("fa/student-list/{FAID}/filter-inst-points-below")
+    public List<StudentWithMandatoryDTO> filterInstPointsBelow(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterInstPointsBelow(FAID, points);
+    }
+
+    // Activity Points - Above
+    @GetMapping("fa/student-list/{FAID}/filter-activity-points-above")
+    public List<StudentWithMandatoryDTO> filterActivityPointsAbove(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterActivityPointsAbove(FAID, points);
+    }
+
+    // Activity Points - Below
+    @GetMapping("fa/student-list/{FAID}/filter-activity-points-below")
+    public List<StudentWithMandatoryDTO> filterActivityPointsBelow(
+            @PathVariable int FAID,
+            @RequestParam Long points
+    ) {
+        return studentService.filterActivityPointsBelow(FAID, points);
+    }
+
+
    @GetMapping("/fa/student-details/{sid}")
     public ResponseEntity<?> getStudentBySid(@PathVariable String sid) {
         Optional<Student> student = studentService.getStudentById(sid);

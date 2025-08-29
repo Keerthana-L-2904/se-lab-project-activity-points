@@ -56,7 +56,6 @@ public class StudentService {
     announcementsRepository.findAll().forEach(announcementsList::add);
     return announcementsList;
     }
-    
     public List<Student> getStudentsByFAID(int FAID) {
     return studentRepository.findByFAID(FAID);
     }
@@ -92,4 +91,45 @@ public class StudentService {
                 .toList();
     }
 
-}
+    public List<StudentWithMandatoryDTO> filterDeptPointsAbove(int FAID, Long points) {
+        return studentRepository.findStudentsWithMandatoryCount(FAID).stream()
+                .filter(s -> s.getStudent().getDeptPoints() > points)
+                .toList();
+    }
+    
+    public List<StudentWithMandatoryDTO> filterDeptPointsBelow(int FAID, Long points) {
+        return studentRepository.findStudentsWithMandatoryCount(FAID).stream()
+                .filter(s -> s.getStudent().getDeptPoints() < points)
+                .toList();
+    }
+    
+    public List<StudentWithMandatoryDTO> filterInstPointsAbove(int FAID, Long points) {
+        return studentRepository.findStudentsWithMandatoryCount(FAID).stream()
+                .filter(s ->  s.getStudent().getInstitutePoints() > points)
+                .toList();
+    }
+    
+    public List<StudentWithMandatoryDTO> filterInstPointsBelow(int FAID, Long points) {
+        return studentRepository.findStudentsWithMandatoryCount(FAID).stream()
+                .filter(s -> s.getStudent().getInstitutePoints() < points)
+                .toList();
+    }
+    
+    // Activity Points - Above
+    public List<StudentWithMandatoryDTO> filterActivityPointsAbove(int FAID, Long points) {
+        return studentRepository.findStudentsWithMandatoryCount(FAID).stream()
+                .filter(s -> s.getStudent().getActivityPoints() > points)
+                .toList();
+    }
+
+    // Activity Points - Below
+    public List<StudentWithMandatoryDTO> filterActivityPointsBelow(int FAID, Long points) {
+        return studentRepository.findStudentsWithMandatoryCount(FAID).stream()
+                .filter(s -> s.getStudent().getActivityPoints() < points)
+                .toList();
+    }
+
+
+    
+
+}   

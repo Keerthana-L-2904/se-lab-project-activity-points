@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import com.example.student_activity_points.repository.DepartmentsRepository;
 
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -126,7 +125,7 @@ public class AdminManageUsersController {
                 student.setDeptPoints((int) row.getCell(4).getNumericCellValue());
                 student.setInstitutePoints((int) row.getCell(6).getNumericCellValue());
                 student.setEmailID(row.getCell(5).getStringCellValue().trim());
-                student.setOtherPoints((int) row.getCell(3).getNumericCellValue());
+                student.setActivityPoints((int) row.getCell(3).getNumericCellValue());
                 student.setName(row.getCell(7).getStringCellValue());
 
                 // avoid duplicates
@@ -172,29 +171,11 @@ public class AdminManageUsersController {
                 // assuming Excel columns are: name | emailID | DID
                 fa.setName(row.getCell(0).getStringCellValue().trim());
                 fa.setEmailID(row.getCell(1).getStringCellValue().trim());
-                if (row.getCell(2) != null) {
-                    switch (row.getCell(2).getCellType()) {
-                        case STRING -> {
-                            String val = row.getCell(2).getStringCellValue().trim();
-                            if (!val.isEmpty() && val.matches("\\d+")) {
-                                fa.setDID(Integer.parseInt(val));
-                            } else {
-                                System.out.println("Skipping invalid DID at row " + (i+1));
-                                continue; // skip this row
-                            }
-                        }
-                        case NUMERIC -> fa.setDID((int) row.getCell(2).getNumericCellValue());
-                        default -> {
-                            System.out.println("Skipping invalid DID at row " + (i+1));
-                            continue; // skip this row
-                        }
-                    }
-                } else {
-                    System.out.println("Skipping row " + (i+1) + " because DID is null");
-                    continue;
-                }
+                fa.setDID((int) row.getCell(2).getNumericCellValue());
+
                 faList.add(fa);
             }
+
             faRepository.saveAll(faList);
             return ResponseEntity.ok("Uploaded " + faList.size() + " FA records successfully");
 
@@ -235,9 +216,6 @@ public class AdminManageUsersController {
                 
                 if (updatedStudent.getDeptPoints() != 0) {
                     existingStudent.setDeptPoints(updatedStudent.getDeptPoints());
-                }
-                if (updatedStudent.getOtherPoints() != 0) {
-                    existingStudent.setOtherPoints(updatedStudent.getOtherPoints());
                 }
                 
 

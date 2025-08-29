@@ -2,8 +2,6 @@ package com.example.student_activity_points.repository;
 
 import com.example.student_activity_points.domain.Student;
 import com.example.student_activity_points.dto.StudentWithMandatoryDTO;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +16,9 @@ public interface StudentRepository extends CrudRepository<Student, String> {
 
     // Fetch student by student ID
     Optional<Student> findBySid(String studentID);
+
+
+    // List<Student> findByFAID(int FAID);
 
     @Query("SELECT s FROM Student s WHERE s.FAID = :FAID")
     List<Student> findByFAID(@Param("FAID") int FAID);
