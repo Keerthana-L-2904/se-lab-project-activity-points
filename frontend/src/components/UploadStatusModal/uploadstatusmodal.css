@@ -1,0 +1,191 @@
+/* Overlay and modal */
+.usm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  
+  .usm-modal {
+    width: 640px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    padding: 20px 22px;
+    box-sizing: border-box;
+    color: #111827;
+  }
+  
+  /* Titles */
+  .usm-title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .usm-subtitle {
+    margin: 4px 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  /* Hidden native input */
+  .usm-hidden-input {
+    display: none;
+  }
+  
+  /* File row */
+  .usm-file-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .usm-file-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .usm-no-file {
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  .usm-file-selected {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .usm-file-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 360px;
+    display: inline-block;
+  }
+  
+  .usm-file-meta {
+    color: #6b7280;
+    font-size: 13px;
+  }
+  
+  .usm-badge {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .usm-badge-selected {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  
+  /* Stats */
+  .usm-stats {
+    display: flex;
+    gap: 28px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .usm-stat {
+    min-width: 120px;
+  }
+  
+  .usm-stat-label {
+    color: #6b7280;
+    font-size: 12px;
+  }
+  
+  .usm-stat-value {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  
+  /* Skipped box */
+  .usm-skipped {
+    margin-top: 12px;
+    background: #fff7ed;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  
+  .usm-skipped-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .usm-skipped-list {
+    margin: 0;
+    padding-left: 18px;
+  }
+  
+  .usm-skipped-item {
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  
+  /* Buttons */
+  .usm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .usm-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: none;
+  }
+  
+  .usm-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .usm-btn-primary {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .usm-btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+  }
+  
+  .usm-btn-success {
+    background: #10b981;
+    color: white;
+  }
+  
+  /* Small responsive tweaks */
+  @media (max-width: 520px) {
+    .usm-modal {
+      padding: 16px;
+    }
+    .usm-file-name {
+      max-width: 200px;
+    }
+    .usm-stats {
+      gap: 18px;
+    }
+  }

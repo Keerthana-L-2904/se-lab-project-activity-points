@@ -1,0 +1,129 @@
+.close {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.close-btn {
+  background: #f05a5a;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #d94444;
+}
+
+/* Error styling */
+.error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+
+/* General form container */
+.request-form-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-top:5%;
+}
+.request-form-container p {
+  margin-top: 3%;
+  font-weight: bold;
+}
+/* Title */
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  margin-left:35%;
+}
+
+/* Form groups */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Apply to all inputs, selects, and textarea */
+.request-form-container input[type="text"],
+.request-form-container input[type="number"],
+.request-form-container input[type="date"],
+.request-form-container input[type="file"],
+.request-form-container select,
+.request-form-container textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* On focus */
+.request-form-container input:focus,
+.request-form-container select:focus,
+.request-form-container textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+/* Textarea */
+.request-form-container textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Error text */
+.error {
+  color: red;
+  font-size: 13px;
+}
+
+/* Submit button */
+.submit-btn {
+  display: inline-block;
+  background-color: #0770e8;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-left:45%;
+}
+
+.submit-btn:hover {
+  background-color: #3a78c2;
+}
+/* Bold field labels */
+.field-label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Arrange radio buttons horizontally with spacing */
+.radio-group {
+  display: flex;
+  gap: 20px;   /* space between each option */
+  margin-bottom: 10px;
+}
+
+/* Optional: add some spacing inside labels */
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 5px;  /* space between circle and text */
+}

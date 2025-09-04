@@ -1,0 +1,25 @@
+package com.example.student_activity_points.controller;
+
+import com.example.student_activity_points.repository.ActivityRepository;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequestMapping("/api/activities")
+@CrossOrigin(origins = "http://localhost:5173") // Ensure React can access it
+public class ActivityController {
+
+    private final ActivityRepository activityRepository;
+
+    public ActivityController(ActivityRepository activityRepository) {
+        this.activityRepository = activityRepository;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllActivities() {
+        System.out.println(activityRepository.findAll());
+        return ResponseEntity.ok(activityRepository.findAll());
+    }
+}

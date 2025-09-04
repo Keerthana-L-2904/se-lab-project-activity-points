@@ -1,0 +1,155 @@
+.content {
+  position: absolute;
+  top: 80px;
+  left: 15%;
+  width: 80vw;
+
+}
+
+.header {
+  font-size: 32px;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+.header h1 {
+  text-align: center;
+}
+
+.search-add {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: capitalize;
+  margin-top: 3%;
+  padding-right: 1%;
+}
+
+.search {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.body {
+  height: 65vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  margin-top: 2.5%;
+  padding-right: 2%;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: left;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.styled-table th, .styled-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.styled-table thead {
+  background-color: #925FE2;
+  color: white;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+.validate-btn, .approve-btn, .reject-btn {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.validate-btn:hover {
+  opacity: 100%;
+}
+
+.validate-btn.valid {
+  background-color: #4CAF50;
+  color: white;
+  cursor: default;
+}
+
+.validate-btn.invalid {
+  background-color: #D32F2F;
+  color: white;
+  cursor: default;
+}
+
+.validate-btn.n-a{
+  background-color: grey;
+  color: white;
+  cursor: default;
+}
+
+.approve-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.approve-btn:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+}
+
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.reject-btn:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+}
+
+.approved-row {
+  background-color: #d4edda; /* Light green */
+}
+
+.rejected-row {
+  background-color: #f8d7da; /* Light red */
+}
+
+.validate-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.valid {
+  color: #28a745;
+}
+
+.invalid {
+  color: #dc3545;
+ 
+}
+
+.pending {
+  background-color: #ffc107;
+  color: black;
+}
