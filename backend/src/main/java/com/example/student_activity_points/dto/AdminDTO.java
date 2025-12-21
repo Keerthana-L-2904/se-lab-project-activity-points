@@ -1,0 +1,27 @@
+package com.example.student_activity_points.dto;
+
+public class AdminDTO {
+    private int id;
+    private String name;
+    private String email;
+
+    // Constructor
+    public AdminDTO(int id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}

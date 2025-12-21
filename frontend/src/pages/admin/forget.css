@@ -1,0 +1,135 @@
+/* Full screen center alignment */
+.reset-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #9e7ae1;
+}
+
+/* Form box */
+.reset-form {
+  background-color:  rgb(19, 18, 18);
+  box-shadow:0 2px 10px rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 32px;
+  width: 380px;
+  max-width: 90%;
+}
+
+/* Heading */
+.reset-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+  color:white;
+}
+
+/* Input field */
+.reset-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.2s, box-shadow 0.2s;
+   margin-left:-2%;
+}
+
+.reset-input:focus {
+  outline: none;
+  border-color: #3b82f6; /* blue */
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+/* Button */
+.reset-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #22c55e; /* green */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reset-button:hover:not(:disabled) {
+  background-color: #16a34a; /* darker green */
+}
+
+.reset-button:disabled {
+  background-color: #9ca3af; /* gray when disabled */
+  cursor: not-allowed;
+}
+/* Container - centers everything */
+.forgot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color:  #9e7ae1;
+}
+
+/* Form box */
+.forgot-form {
+  background-color: rgb(19, 18, 18);
+  box-shadow:0 2px 10px rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 32px;
+  width: 380px;
+  max-width: 90%;
+  
+}
+
+/* Heading */
+.forgot-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+  color: white;
+}
+
+/* Input field */
+.forgot-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.2s, box-shadow 0.2s;
+  margin-left:-2%;
+}
+
+.forgot-input:focus {
+  outline: none;
+  border-color: #3b82f6; /* blue */
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+/* Button */
+.forgot-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #2563eb; /* blue */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.forgot-button:hover:not(:disabled) {
+  background-color: #1d4ed8; /* darker blue */
+}
+
+.forgot-button:disabled {
+  background-color: #9ca3af; /* gray when disabled */
+  cursor: not-allowed;
+}

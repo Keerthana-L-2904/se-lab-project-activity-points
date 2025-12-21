@@ -1,0 +1,72 @@
+
+.admin-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #9e7ae1;
+  flex-direction: column; 
+}
+
+.admin-login-form {
+  background-color: rgb(19, 18, 18);
+  padding: 24px;
+  justify-content: center;
+  height: 50%;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+  width: 384px; /* 96 in Tailwind = 384px */
+}
+
+.form-inner-content{
+
+ margin-top: 20%;
+ gap: 10%;
+ align-items: center;
+ justify-content: center;
+ margin-left: 15px;
+}
+.admin-login-container h2 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color:black;
+  text-transform: uppercase;
+  font-size: 32px;
+}
+
+.admin-login-form input {
+  width: 350px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+}
+
+.admin-login-form button {
+  width: 300px;
+  background-color: #2563eb;
+  color: white;
+  margin-left: 30px;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-login-form button:hover {
+  background-color: #2563eb;
+}
+
+.admin-login-form p {
+  margin-top: 1rem;
+  text-align: center;
+  color:white;
+}
+
+.admin-login-form a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+.admin-login-form a:hover{
+  color: rgb(100, 100, 224);
+}

@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: student_activity_points-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: student_activity_points
+    ports:
+      - "3306:3306"
+    networks:
+      - network-activity_points
+    volumes:
+      - student_activity_points-mysql-data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: student_activity_points-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://student_activity_points-mysql:3306/student_activity_points
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    networks:
+      - network-activity_points
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend      # <- Use your Dockerfile in frontend folder
+    container_name: student_activity_points-frontend
+    ports:
+      - "5173:80"
+    networks:
+      - network-activity_points
+    depends_on:
+      - backend
+
+
+networks:
+  network-activity_points:
+    driver: bridge
+
+volumes:
+  student_activity_points-mysql-data:

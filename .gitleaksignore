@@ -1,0 +1,11 @@
+# Ignore all findings in README.md and backend/.env
+
+# Use proper fingerprints OR regex-based path ignore
+# Since your leak is "backend/.env:generic-api-key:1", this line matches it exactly:
+backend/.env:generic-api-key:1
+
+# Or if you want to ignore all leaks in that file:
+path:backend/.env
+
+# You can also use this to ignore README.md entirely:
+path:README.md
