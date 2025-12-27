@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './admin.css';
-import axios from 'axios';
+import axiosInstance from "../../utils/axiosConfig";
 import UploadStatusModal from '../../components/UploadStatusModal/UploadStatusModal';
 import { toast, Toaster } from "react-hot-toast"; 
 
@@ -11,8 +11,7 @@ const ActivityManagement = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [editActivity, setEditActivity] = useState(null);
-  const token=localStorage.getItem("token");
-
+  
   // 🔹 Filters
   const [typeFilter, setTypeFilter] = useState('');
   const [mandatoryFilter, setMandatoryFilter] = useState('');
@@ -50,11 +49,10 @@ const ActivityManagement = () => {
     try {
       const params = {};
       if (mandatoryFilter) params.mandatory = mandatoryFilter;
-      const response = await axios.get("/api/admin/manage-activities", { params,
-        headers:{
-          Authorization: `Bearer ${token}`,
-        }
-       });
+      const response = await axiosInstance.get(
+        "/api/admin/manage-activities",
+        { params }
+      );
 
       if (response.status === 200) {
         const today = new Date();
@@ -77,18 +75,14 @@ const ActivityManagement = () => {
         toast.error('Error loading activities!');
       }
     } catch (error) {
-      console.error('Error fetching activities', error);
       toast.error('Failed to fetch activities!');
     }
   };
 
   const getDeptData = async () => {
     try {
-      const response = await axios.get("/api/admin/get-departments",{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.get("/api/admin/get-departments");
+
       if (response.status === 200) {
         setDepartments(response.data);
       } else {
@@ -107,10 +101,14 @@ const ActivityManagement = () => {
     .filter(activity =>
       typeFilter ? activity.type.toLowerCase().includes(typeFilter.toLowerCase()) : true
     )
-    .filter(activity =>
-      deptFilter ? (departments.find(dept => dept.did === activity.DID)?.name || "N/A")
-        .toLowerCase().includes(deptFilter.toLowerCase()) : true
-    )
+    .filter(activity => {
+      if (!deptFilter) return true;
+      const dept = departments.find(d => 
+        String(d.did) === String(activity.DID || activity.did)
+      );
+      const deptName = dept ? dept.name : "N/A";
+      return deptName.toLowerCase().includes(deptFilter.toLowerCase());
+    })
     .filter(activity =>
       statusFilter ? activity.status.toLowerCase().includes(statusFilter.toLowerCase()) : true
     )
@@ -122,11 +120,8 @@ const ActivityManagement = () => {
 
   const handleAddActivity = async () => {
     try {
-      const response = await axios.post("/api/admin/manage-activities", newActivity,{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.post("/api/admin/manage-activities", newActivity);
+
       if (response.status === 200) {
         toast.success("Activity added successfully!");
         fetchData();
@@ -145,18 +140,17 @@ const ActivityManagement = () => {
         toast.error("Error adding activity!");
       }
     } catch (error) {
-      console.error("Error adding activity", error);
       toast.error("Failed to add activity!");
     }
   };
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`/api/admin/manage-activities/${editActivity.actID}`, editActivity,{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.put(
+        `/api/admin/manage-activities/${editActivity.actID}`,
+        editActivity
+      );
+
       if (response.status === 200) {
         toast.success("Activity updated successfully!");
         fetchData();
@@ -165,18 +159,16 @@ const ActivityManagement = () => {
         toast.error("Error updating activity!");
       }
     } catch (error) {
-      console.error("Error updating activity", error);
       toast.error("Failed to update activity!");
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`/api/admin/manage-activities/${id}`,{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+          const response = await axiosInstance.delete(
+          `/api/admin/manage-activities/${id}`
+        );
+
       if (response.status === 200) {
         toast.success("Activity deleted successfully!");
         fetchData();
@@ -184,7 +176,6 @@ const ActivityManagement = () => {
         toast.error("Error deleting activity!");
       }
     } catch (error) {
-      console.error("Error deleting activity", error);
       toast.error("Failed to delete activity!");
     }
   };
@@ -204,58 +195,84 @@ const ActivityManagement = () => {
   const handleBulkUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+  
     const formData = new FormData();
     formData.append("file", file);
-
+  
     try {
-      const response = await axios.post("/api/admin/bulk-upload-activities", formData, {
-        headers: { "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`
-         }
-      });
+      const response = await axiosInstance.post(
+      "/api/admin/bulk-upload-activities",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
 
-      if (response.status === 200) {
-        toast.success(response.data);
-        fetchData();
+  
+      toast.success(response.data);
+      fetchData();
+  
+    } catch (err) {
+      let errorMessage = "Failed to upload activities ❌";
+  
+      if (err.response) {
+        errorMessage =
+          typeof err.response.data === "string"
+            ? err.response.data
+            : err.response.data?.message || "Failed to upload activities";
+  
+      } else if (err.request) {
+        errorMessage = "Server not responding. Please try again later.";
+  
       } else {
-        toast.error("Error uploading activities!");
+        errorMessage = err.message;
       }
-    } catch (error) {
-      console.error("Bulk upload error", error);
-      toast.error("Failed to upload activities!");
+  
+      toast.error(errorMessage);
+  
     } finally {
       event.target.value = null;
     }
   };
-
+  
   const handleBulkDelete = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+  
     const formData = new FormData();
     formData.append("file", file);
-
+  
     try {
-      const response = await axios.post("/api/admin/bulk-delete-activities", formData, {
-        headers: { "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`
-         }
-      });
+      const response = await axiosInstance.post(
+      "/api/admin/bulk-delete-activities",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
 
-      if (response.status === 200) {
-        toast.success(response.data);
-        fetchData();
+      toast.success(response.data);
+      fetchData();
+  
+    } catch (err) {
+      let errorMessage = "Failed to delete activities ❌";
+  
+      if (err.response) {
+        errorMessage =
+          typeof err.response.data === "string"
+            ? err.response.data
+            : err.response.data?.message || "Failed to delete activities";
+  
+      } else if (err.request) {
+        errorMessage = "Server not responding. Please try again later.";
+  
       } else {
-        toast.error("Error deleting activities!");
+        errorMessage = err.message;
       }
-    } catch (error) {
-      console.error("Bulk delete error", error);
-      toast.error("Failed to delete activities!");
+  
+      toast.error(errorMessage);
+  
     } finally {
       event.target.value = null;
     }
   };
+  
   
   return (
     <div className="content"> <Toaster />
@@ -412,12 +429,14 @@ const ActivityManagement = () => {
             <input type="text" value={editActivity.name} onChange={(e) => setEditActivity({...editActivity, name: e.target.value})} />
             
             <label>Type:</label>
-            <select value={newActivity.type} onChange={(e) => setNewActivity({...newActivity, type: e.target.value})}>
+            <select value={editActivity.type} onChange={(e) => setEditActivity({...editActivity, type: e.target.value})}>
               <option value="">Select Type</option>
               <option value="Institute">Institute</option>
               <option value="Department">Department</option>
               <option value="Other">Other</option>
             </select>
+            <label>Points:</label>
+              <input type="text" value={editActivity.points} onChange={(e) => setEditActivity({...editActivity, points: e.target.value})} />
             
             <label>Start Date:</label>
             <input type="date" value={editActivity.date} onChange={(e) => setEditActivity({...editActivity, date: e.target.value})} />

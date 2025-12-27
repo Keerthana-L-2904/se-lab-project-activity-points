@@ -1,17 +1,27 @@
 package com.example.student_activity_points.controller;
 
 import com.example.student_activity_points.dto.TrackingDTO;
+import com.example.student_activity_points.security.AuthUser;
 import com.example.student_activity_points.service.TrackingService;
 
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/api/{sid}/tracking")
+@RequestMapping("/api/tracking")
 public class TrackingController {
+
+
+    private AuthUser currentUser() {
+        return (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
 
     private final TrackingService trackingService;
 
@@ -22,8 +32,10 @@ public class TrackingController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getTracking(@PathVariable String sid) {
+    public ResponseEntity<?> getTracking() {
+        String sid = null;
         try {
+            sid = currentUser().getSid();
             if (sid == null || sid.trim().isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Student ID is required");

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./approvals.css";
 import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import { toast, Toaster } from "react-hot-toast"; 
 
 const Approvals = () => {
@@ -13,7 +13,7 @@ const Approvals = () => {
   const [studentFAIds, setStudentFAIds] = useState({});
   const [comments, setComments] = useState({});
   const [loading, setLoading] = useState({}); // track loading state per request
-  const token=localStorage.getItem("token");
+  
   // Fetch FA Details and Requests
   useEffect(() => {
     if (user) {
@@ -32,11 +32,10 @@ const Approvals = () => {
     const fetchfaData = async (email) => {
       if (!email) return;
       try {
-        const response = await axios.get(`/api/fa/details?email=${email}`,{
-          headers:{
-            "Authorization": `Bearer ${token}`,
-          }
-        });
+        const response = await axiosInstance.get(
+        `/api/fa/details`,
+        { params: { email } }
+      );
         if (response.status === 200) {
           setFaDetails({
             faId: response.data.fa_id,
@@ -51,11 +50,8 @@ const Approvals = () => {
             initialPoints[req.rid] = req.points; // assuming backend sends "points"
           });
           setPoints(initialPoints);
-
-          console.log(response.data);
         }
       } catch (error) {
-        console.error("Error fetching FA details", error);
         toast.error("Error fetching FA details!");
       }
     };
@@ -65,12 +61,10 @@ const Approvals = () => {
     if (studentFAIds[sid]) return; // Already fetched
   
     try {
-      const response = await axios.get(`/api/fa/get-Fa?sid=${sid}`,{
-        headers:{
-          "Authorization": `Bearer ${token}`,
-        }
-      });
-      console.log(response.data)
+      const response = await axiosInstance.get(
+      "/api/fa/get-Fa",
+      { params: { sid } }
+    );
       if (response.status === 200) {
         setStudentFAIds(prev => ({
           ...prev,
@@ -89,7 +83,7 @@ const Approvals = () => {
 
     setLoading(prev => ({ ...prev, [rid]: true })); // disable immediately
     let enteredPoints = points[rid];
-    //console.log("hello") 
+
     try {
       if (studentFAIds[sid]=== user.faid && (!enteredPoints  || enteredPoints <= 0)) {
         enteredPoints=5;
@@ -99,20 +93,18 @@ const Approvals = () => {
         enteredPoints=5;
       }
     
-      const response = await axios.post(
-        `/api/fa/approve-request/${rid}?email=${user.email}&points=${enteredPoints}`,
+      const response = await axiosInstance.post(
+        `/api/fa/approve-request/${rid}`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { params: { email: user.email, points: enteredPoints } }
       );
+
 
       if (response.status === 200) {
         await fetchfaData(user.email);
         toast.success("Approval successful");
       }
     } catch (error) {
-      console.error("Approval error", error);
       toast.error(error.message || error.response?.data || "Approval failed!");
     }finally {
       setLoading(prev => ({ ...prev, [rid]: false })); // re-enable if failed
@@ -122,17 +114,12 @@ const Approvals = () => {
 
   const openProof = async (reqid) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Not authenticated");
+      
   
-      const url = `http://localhost:8080/api/fa/requests/${reqid}/proof`;
-  
-      const resp = await axios.get(url, {
-        responseType: "blob", // important!
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const resp = await axiosInstance.get(`http://localhost:8080/api/fa/requests/${reqid}/proof`, {
+        responseType: "blob",
       });
+
       const contentType = resp.headers["content-type"] || "application/octet-stream";
             const blob = new Blob([resp.data], { type: contentType });
             const blobUrl = URL.createObjectURL(blob);
@@ -143,7 +130,6 @@ const Approvals = () => {
             // optionally revoke after some time
             setTimeout(() => URL.revokeObjectURL(blobUrl), 1000 * 60);
           } catch (err) {
-            console.error("Failed to open proof:", err);
             toast.error("Proof not uploaded");
           }
         };
@@ -151,11 +137,11 @@ const Approvals = () => {
   // Reject Request
   const handleReject = async (rid, index,comment) => {
     try {
-      const response = await axios.post(`/api/fa/reject-request/${rid}`,{comment:comment?comment: "No comments"},{
-        headers:{
-          "Authorization": `Bearer ${token}`,
-        }
-      });
+      const response = await axiosInstance.post(
+      `/api/fa/reject-request/${rid}`,
+      { comment: comment || "No comments" }
+    );
+
       if (response.status === 200) {
         await fetchfaData(user.email);
         toast.success("Rejection successful")
@@ -163,7 +149,6 @@ const Approvals = () => {
         toast.error("Failed to reject!");
     }
     } catch (error) {
-      console.error("Rejection error", error);
       toast.error("Rejection failed!");
     }
   };

@@ -1,121 +1,126 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import axiosInstance, { setCSRFToken } from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [authError,setauthError]=useState("");
+  const [loading, setLoading] = useState(true);
+  const [authError, setauthError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) setUser(storedUser);
-    setLoading(false); // Set loading to false after checking localStorage
+    if (storedUser) { 
+      setUser(storedUser);
+    }
+    setLoading(false);
   }, []);
 
   const loginstudent = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const { data } = await axios.get(
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
-          }
-        );
-        const response = await axios.post('/api/auth/login-student', {
-          email: data.email,
+        const response = await axiosInstance.post('/api/auth/login-student', {
+          accessToken: tokenResponse.access_token, 
         });
-  
+
         if (response.status === 200) {
           const studentDetails = response.data;
-          studentDetails.role = "student"; // Ensure role is stored
+          studentDetails.role = "student";
+          
           localStorage.setItem('user', JSON.stringify(studentDetails));
-          localStorage.setItem('token', response.data.token); // Store token separately
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+          
+          const csrfToken = response.headers['x-csrf-token'];
+          if (csrfToken) {
+            setCSRFToken(csrfToken);
+          }
+          
           setUser(studentDetails);
           navigate('/student/dashboard');
+        } else if (response.status === 429) {
+          setauthError("Too many requests, try again after sometime");
         } else {
-          console.error('Authentication failed: ', response.data);
           setauthError(response.data);
         }
       } catch (error) {
-        console.error('Error during login: ', error);
+        console.log('🔴 error.response:', error.response);
+        
         const message =
-    error.response?.data||
-    error.message ||
-    "Invalid login. You are not authorized.";
-
-  setauthError(message);
+          typeof error.response?.data === "string"
+            ? error.response.data
+            : error.response?.data?.message
+            ? error.response.data.message
+            : error.message ||
+              "Invalid login. You are not authorized.";
+        setauthError(message);
       }
     },
     onError: () => {
-      console.error('Login Failed');
+      setauthError("Google login failed. Please try again.");
     },
   });
-  
-
 
   const loginfa = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const { data } = await axios.get(
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
-          }
-        );
-  
-        const response = await axios.post('/api/auth/login-fa', {
-          email: data.email,
+        const response = await axiosInstance.post('/api/auth/login-fa', {
+          accessToken: tokenResponse.access_token,
         });
-  
         if (response.status === 200) {
           const faDetails = response.data;
-          faDetails.role = "fa"; // Ensure role is stored
-          localStorage.setItem('user', JSON.stringify(faDetails)); // Store FA details under 'user'
-          localStorage.setItem('token', response.data.token); // Store token separately
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+          faDetails.role = "fa";
+          
+          localStorage.setItem('user', JSON.stringify(faDetails));
+          
+          const csrfToken = response.headers['x-csrf-token'];
+          if (csrfToken) {
+            setCSRFToken(csrfToken);
+          }
+          
           setUser(faDetails);
           navigate('/fa/dashboard');
+        } else if (response.status === 429) {
+          setauthError("Too many requests, try again after sometime");
         } else {
-          console.error('Authentication failed: ', response.data);
-	 // alert("Authentication failed: ",response.data);
           setauthError(response.data);
-
         }
       } catch (error) {
-        console.error('Error during login: ', error);
-	//alert("Authentication failed: ",response.data);
-         const message =
-    error.response?.data ||
-    error.message ||
-    "Invalid login. You are not authorized.";
-
-  setauthError(message);
+        console.log('🔴 error.response:', error.response);
+        const message =
+          typeof error.response?.data === "string"
+            ? error.response.data
+            : error.response?.data?.message
+            ? error.response.data.message
+            : error.message ||
+              "Invalid login. You are not authorized.";
+        setauthError(message);
       }
     },
     onError: () => {
-      console.error('Login Failed');
+      setauthError("Google login failed. Please try again.");
     },
   });
-  
-const logout = () => {
-  localStorage.clear();
-  setUser(null);
-  navigate('/login');
-};
 
+  const logout = async () => {
+    try {
+      await axiosInstance.post('/api/auth/logout');
+      
+      localStorage.clear();
+      setCSRFToken(null);
+      setUser(null);
+      navigate('/login');
+    } catch (error) {
+      localStorage.clear();
+      setCSRFToken(null);
+      setUser(null);
+      navigate('/login');
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loginstudent,loginfa, logout, loading,authError,setauthError }}>
+    <AuthContext.Provider value={{ user, loginstudent, loginfa, logout, loading, authError, setauthError }}>
       {children}
     </AuthContext.Provider>
   );

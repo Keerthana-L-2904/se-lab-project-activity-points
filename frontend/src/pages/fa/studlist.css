@@ -21,11 +21,6 @@
   border-radius: 4px;
   cursor: pointer;
 }
-
-th:nth-child(6) {
-  width: 100%;
-}
-
 /* mandatory search box*/
 .mandatory-search {
   display: flex;
@@ -35,7 +30,6 @@ th:nth-child(6) {
   white-space: nowrap; 
 }
 .mandatory-search input {
-  width: 100%;
   padding: 6px;
   font-size: 14px;
 }
@@ -94,4 +88,11 @@ th:nth-child(6) {
 
 .vieww-btn:hover {
   background-color: #c98bfb;
+}
+
+.list-table{
+  width:80%;
+  margin-left:15%;
+  margin-top:2%;
+
 }

@@ -4,9 +4,11 @@ import com.example.student_activity_points.domain.Announcements;
 import com.example.student_activity_points.domain.Student;
 import com.example.student_activity_points.repository.AnnouncementsRepository;
 import com.example.student_activity_points.repository.StudentRepository;
+import com.example.student_activity_points.security.AuthUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,13 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/api/student")
 public class AnnouncementsController {
 
+    private AuthUser currentUser() {
+        return (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
     @Autowired
     private StudentRepository studentRepository;
 
@@ -27,9 +36,11 @@ public class AnnouncementsController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnouncementsController.class);
 
-    @GetMapping("/{sid}/announcements")
-    public ResponseEntity<?> getAnnouncements(@PathVariable String sid) {
+    @GetMapping("/announcements")
+    public ResponseEntity<?> getAnnouncements() {
+        String sid = null;
         try {
+            sid = currentUser().getSid();
             Optional<Student> student = studentRepository.findById(sid);
 
             if (student.isEmpty()) {
@@ -51,9 +62,11 @@ public class AnnouncementsController {
         }
     }
 
-    @GetMapping("/{sid}/announcements/{aid}")
-    public ResponseEntity<?> getAnnouncement(@PathVariable String sid, @PathVariable Long aid) {
+    @GetMapping("/announcements/{aid}")
+    public ResponseEntity<?> getAnnouncement(@PathVariable Long aid) {
+        String sid = null;
         try {
+            sid = currentUser().getSid();
             Optional<Student> student = studentRepository.findById(sid);
 
             if (student.isEmpty()) {

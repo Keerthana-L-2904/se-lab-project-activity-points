@@ -8,17 +8,21 @@ public class StudentWithFADTO {
     private String email;
     private String faName;
     private String faEmail;
+    private Long FAID;
     private int deptPoints;
     private int institutePoints;
     private int otherPoints;
     private int activityPoints;
 
+
+    
     public StudentWithFADTO(Student student, String faName, String faEmail) {
         this.sid = student.getSid();
         this.name = student.getName();
         this.email = student.getEmailID();
         this.faName = faName;
         this.faEmail = faEmail;
+        this.FAID = (long) student.getFaid();
         this.deptPoints = student.getDeptPoints();
         this.institutePoints = student.getInstitutePoints();
         this.otherPoints = student.getOtherPoints();
@@ -32,6 +36,13 @@ public class StudentWithFADTO {
 
     public String getName() {
         return name;
+    }
+
+    public Long getFAID() { 
+        return FAID; 
+    }
+    public void setFAID(Long faid) { 
+        this.FAID = faid; 
     }
 
     public String getEmail() {

@@ -4,7 +4,7 @@ import { AuthContext } from "./context/AuthContext";
 import AdminProtectedRoute from "./components/Login/AdminProtectedRoute";
 import AdminLogin from "./pages/login/AdminLogin";
 import AdminRegister from "./pages/login/AdminRegister";
-
+import './utils/axiosConfig'; 
 import AdminLayout from "./layouts/AdminLayout";
 import StudentLayout from "./layouts/StudentLayout";
 import FaLayout from "./layouts/FaLayout"
@@ -102,9 +102,6 @@ function App() {
 
                 {/* Login Route */}
                 <Route path="/login" element={<LoginPage />} />
-
-                {/* Redirect unknown routes to login */}
-                <Route path="*" element={<LoginPage />} />
             </Routes>
         // </Router>
     );

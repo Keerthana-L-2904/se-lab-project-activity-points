@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./dashboard.css";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../utils/axiosConfig";
 
 const StudentDashboard = () => {
     const [student, setStudent] = useState(null);
@@ -10,61 +11,48 @@ const StudentDashboard = () => {
     const fetchStudentData = async () => {
         try {
             const storedUser = localStorage.getItem("user");
-            const token = localStorage.getItem("token");
 
-            if (!storedUser) return console.error("No user in localStorage.");
+            if (!storedUser) {
+                return;
+            }
 
             const user = JSON.parse(storedUser);
 
-            // Fetch student
-            const studentResponse = await fetch(`http://localhost:8080/api/student/${user.sid}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const studentData = await studentResponse.json();
-            setStudent(studentData);
+            // ✅ Fetch student data
+            const studentResponse = await axiosInstance.get("/api/student");
+            setStudent(studentResponse.data);
 
-            // Fetch latest activity (SAFE)
-            const activityResponse = await fetch(
-                `http://localhost:8080/api/student/${user.sid}/latest-activity`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            let activityData = null;
+            // ✅ FIXED: Fetch latest activity using axios (not fetch)
             try {
-                if (activityResponse.ok) {
-                    activityData = await activityResponse.json();
+                const activityResponse = await axiosInstance.get("/api/student/latest-activity");
+                
+                if (activityResponse.data) {
+                    setLatestActivity(activityResponse.data);
                 } else {
                     console.log("No latest activity available.");
                 }
-            } catch (e) {
-                console.log("Error parsing activity JSON");
+            } catch (activityError) {
+                console.log("No latest activity available:", activityError.message);
+                setLatestActivity(null);
             }
-            setLatestActivity(activityData);
 
-            // Fetch announcements ALWAYS
-            const announcementResponse = await fetch(
-                `http://localhost:8080/api/student/${user.sid}/announcements`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            let announcementData = [];
+            // ✅ FIXED: Fetch announcements using axios (not fetch)
             try {
-                if (announcementResponse.ok) {
-                    announcementData = await announcementResponse.json();
+                const announcementResponse = await axiosInstance.get("/api/student/announcements");
+                
+                if (announcementResponse.data && Array.isArray(announcementResponse.data)) {
+                    setAnnouncements(announcementResponse.data.slice(-2));
                 } else {
-                    console.log("Announcements route returned no data");
+                    setAnnouncements([]);
                 }
-            } catch (e) {
-                console.log("Error parsing announcements JSON");
+            } catch (announcementError) {
+                setAnnouncements([]);
             }
-
-            setAnnouncements(announcementData.slice(-2));
 
         } catch (error) {
-            console.error("Error fetching student data:", error);
+            console.error("Error fetching student data:", error.response);
         }
     };
-
 
     useEffect(() => {
         fetchStudentData();
@@ -77,7 +65,7 @@ const StudentDashboard = () => {
             {student && (
                 <div className="student-info">
                     <h3>Welcome back, {student.name}!</h3>
-                    <p>Roll-number: {student.sid} |FA-Name: {student?.faName} | FA-Mail: {student?.faEmail}</p>
+                    <p>Roll-number: {student.sid} | FA-Name: {student?.faName} | FA-Mail: {student?.faEmail}</p>
                 </div>
             )}
            {/* Display Points */}
@@ -95,7 +83,7 @@ const StudentDashboard = () => {
                     <p>Other Points</p>
                 </div>
                 <div className="progress-box">
-                    <h2>{(student?.deptPoints || 0) + (student?.institutePoints || 0)+(student?.otherPoints || 0)}</h2>
+                    <h2>{(student?.deptPoints || 0) + (student?.institutePoints || 0) + (student?.otherPoints || 0)}</h2>
                     <p>Total Activity Points</p>
                 </div>
             </div>
@@ -117,8 +105,8 @@ const StudentDashboard = () => {
                 <tbody>
                     {latestActivity ? (
                         <tr>
-                            <td style={{textTransform:"uppercase"}}>{latestActivity?.title || "No title available"}</td>
-                            <td>{latestActivity?.activityType || "No type available"}</td>
+                            <td style={{textTransform:"uppercase"}}>{latestActivity?.title || latestActivity?.name || "No title available"}</td>
+                            <td>{latestActivity?.activityType || latestActivity?.type || "No type available"}</td>
                             <td>{latestActivity?.points ?? "0"}</td>
                             <td>{latestActivity?.date || "No date available"}</td>
                         </tr>

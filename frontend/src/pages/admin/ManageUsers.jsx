@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import "./manage.css";
 import { PiStudent } from "react-icons/pi";
 import { GiTeacher } from "react-icons/gi";
@@ -8,6 +8,7 @@ import { toast, Toaster } from "react-hot-toast";
 const UserManagement = () => {
   const [students, setStudents] = useState([]);
   const [fas, setFas] = useState([]);
+  const [filterFaName, setFilterFaName] = useState("");
   const [file, setFile] = useState(null);
   const [faFile, setFaFile] = useState(null);
   const [filterYear, setFilterYear] = useState("");
@@ -19,8 +20,7 @@ const UserManagement = () => {
   const [faPage, setFaPage] = useState(1);   
   const [view, setView] = useState(""); 
   const [editStudent, setEditStudent] = useState(null);
-  const token=localStorage.getItem("token");
-
+ 
   const itemsPerPage = 10;
 
   // File handlers
@@ -30,27 +30,45 @@ const handleFaFileChange = (e) => setFaFile(e.target.files[0]);
 const [loadingStudents, setLoadingStudents] = useState(false);
 const [loadingFas, setLoadingFas] = useState(false);
 
-// Upload students
 const uploadStudents = async () => {
   if (!file) {
-    document.getElementById("student-file").click(); // open file picker
+    document.getElementById("student-file").click();
     return;
   }
+
   const formData = new FormData();
   formData.append("file", file);
+
   setLoadingStudents(true);
+
   try {
-    await axios.post("/api/admin/manage-users/upload-students", formData,{
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
-    });
-    toast.success("Students uploaded successfully ✅");
+    const response = await axiosInstance.post(
+      "/api/admin/manage-users/upload-students",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    // ✅ SHOW BACKEND MESSAGE
+    toast.success(response.data);
     setFile(null);
     fetchStudents();
+
   } catch (err) {
-    console.error(err);
-    toast.error("Error uploading student file ❌");
+    let errorMessage = "Something went wrong ❌";
+
+    if (err.response) {
+      errorMessage =
+        typeof err.response.data === "string"
+          ? err.response.data
+          : err.response.data?.message || "Upload failed";
+    } else if (err.request) {
+      errorMessage = "Server not responding. Please try again later.";
+    } else {
+      errorMessage = err.message;
+    }
+
+    toast.error(errorMessage);
+
   } finally {
     setLoadingStudents(false);
   }
@@ -59,24 +77,45 @@ const uploadStudents = async () => {
 // Upload FAs
 const uploadFas = async () => {
   if (!faFile) {
-    document.getElementById("fa-file").click(); // open file picker
+    document.getElementById("fa-file").click();
     return;
   }
+
   const formData = new FormData();
   formData.append("file", faFile);
+
   setLoadingFas(true);
+
   try {
-    await axios.post("/api/admin/manage-users/upload-fas", formData,{
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
-    });
-    toast.success("FAs uploaded successfully ✅");
+    const response = await axiosInstance.post(
+      "/api/admin/manage-users/upload-fas",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+
+    // ✅ SHOW BACKEND MESSAGE
+    toast.success(response.data);
     setFaFile(null);
     fetchFas();
+
   } catch (err) {
-    console.error(err);
-    toast.error("Error uploading FA file ❌");
+
+    let errorMessage = "Something went wrong ❌";
+
+    if (err.response) {
+      errorMessage =
+        typeof err.response.data === "string"
+          ? err.response.data
+          : err.response.data?.message || "FA upload failed";
+    } else if (err.request) {
+      errorMessage = "Server not responding. Please try again later.";
+    } else {
+      errorMessage = err.message;
+    }
+
+    toast.error(errorMessage);
+
   } finally {
     setLoadingFas(false);
   }
@@ -85,32 +124,23 @@ const uploadFas = async () => {
   // Fetch data
   const fetchStudents = async () => {
     try {
-      const res = await axios.get("/api/admin/manage-users/student",{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const res = await axiosInstance.get("/api/admin/manage-users/student");
+
       setStudents(res.data);
       setView("students");
       setPage(1);
     } catch (err) {
-      console.error(err);
       toast.error("Error fetching students ❌");
     }
   };
-
   const fetchFas = async () => {
     try {
-      const res = await axios.get("/api/admin/manage-users/fa",{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const res = await axiosInstance.get("/api/admin/manage-users/fa");
+
       setFas(res.data);
       setView("fas");
       setFaPage(1);
     } catch (err) {
-      console.error(err);
       toast.error("Error fetching FAs ❌");
     }
   };
@@ -119,87 +149,120 @@ const uploadFas = async () => {
   const deleteStudent = async (sid) => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
     try {
-      await axios.delete(`/api/admin/manage-users/student/${sid}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+      await axiosInstance.delete(
+      `/api/admin/manage-users/student/${sid}`
+    );
+
       setStudents(students.filter((s) => s.sid !== sid));
     } catch (err) {
-      console.error(err);
       toast.error("Error deleting student ❌");
     }
   };
 
   // Bulk delete students
-const bulkDeleteStudents = async () => {
-  if (loadingDelete) return; // prevent double clicks
+  const bulkDeleteStudents = async () => {
+    if (loadingDelete) return;
+  
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".xlsx,.xls";
+  
+    fileInput.onchange = async (e) => {
+      const deleteFile = e.target.files[0];
+      if (!deleteFile) return;
+  
+      const formData = new FormData();
+      formData.append("file", deleteFile);
+  
+      setLoadingDelete(true);
+  
+      try {
+        const response = await axiosInstance.post(
+        "/api/admin/manage-users/students/bulk-delete",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-  const fileInput = document.createElement("input");
-  fileInput.type = "file";
-  fileInput.accept = ".xlsx,.xls";
-
-  fileInput.onchange = async (e) => {
-    const deleteFile = e.target.files[0];
-    if (!deleteFile) return;
-
-    const formData = new FormData();
-    formData.append("file", deleteFile);
-
-    setLoadingDelete(true); // start loading
-
-    try {
-      await axios.post("/api/admin/manage-users/students/bulk-delete", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`
+  
+        // ✅ SHOW BACKEND MESSAGE
+        toast.success(response.data);
+        fetchStudents();
+  
+      } catch (err) {
+  
+        let errorMessage = "Bulk delete failed";
+  
+        if (err.response) {
+          errorMessage =
+            typeof err.response.data === "string"
+              ? err.response.data
+              : err.response.data?.message || "Bulk delete failed";
+        } else if (err.request) {
+          errorMessage = "Server not responding. Please try again later.";
+        } else {
+          errorMessage = err.message;
         }
-      });
-      toast.success("Bulk delete successful ✅");
-      fetchStudents();
-    } catch (err) {
-      console.error(err);
-      toast.error("Error during bulk delete ❌");
-    } finally {
-      setLoadingDelete(false); // stop loading
-    }
+  
+        toast.error(errorMessage);
+  
+      } finally {
+        setLoadingDelete(false);
+      }
+    };
+  
+    fileInput.click();
   };
-
-  fileInput.click();
-};
+  
 
 
   // Update handlers
   const updateStudent = async () => {
     try {
-      const res = await axios.put(`/api/admin/manage-users/student/${editStudent.sid}`, editStudent,{
-        headers:{
-          Authorization: `Bearer ${token}`
-        }
-      });
+        const res = await axiosInstance.put(
+        `/api/admin/manage-users/student/${editStudent.sid}`,
+        editStudent
+      );
+
       setStudents(
         students.map((s) => (s.sid === editStudent.sid ? res.data : s))
       );
       setEditStudent(null);
     } catch (err) {
-      console.error(err);
       toast.error("Error updating student ❌");
     }
   };
 
   // Filters
   const filteredStudents = students.filter((s) => {
-    const yearMatch = filterYear ? s.sid.substring(1, 3) === filterYear : true;
-    const deptMatch = filterDept ? s.sid.slice(-2).toUpperCase() === filterDept.toUpperCase() : true;
-    return yearMatch && deptMatch;
+  const yearMatch = filterYear
+    ? s.sid.substring(1, 3) === filterYear
+    : true;
+
+  const deptMatch = filterDept
+    ? s.sid.slice(-2).toUpperCase() === filterDept.toUpperCase()
+    : true;
+
+  const faMatch = filterFaName
+    ? s.faName?.toLowerCase().includes(filterFaName.toLowerCase())
+    : true;
+
+  return yearMatch && deptMatch && faMatch;
   });
 
+
   const filteredFas = fas.filter((fa) => {
-    if (!filterDeptFa) return true;
-    const query = filterDeptFa.toLowerCase();
-    return (
-      fa.department?.name?.toLowerCase().includes(query)
-    );
+  const deptMatch = filterDeptFa
+    ? fa.department?.name?.toLowerCase().includes(filterDeptFa.toLowerCase())
+    : true;
+
+  const nameMatch = filterFaName
+    ? fa.name?.toLowerCase().includes(filterFaName.toLowerCase())
+    : true;
+
+  return deptMatch && nameMatch;
   });
+
+
   // Paginated arrays
   const paginatedStudents = filteredStudents.slice(
     (page - 1) * itemsPerPage,
@@ -241,9 +304,6 @@ const bulkDeleteStudents = async () => {
             </div>
         </div>
       </div>
-
-      <hr />
-
       {/* Students Table */}
       {view === "students" && (
         <div>
@@ -251,6 +311,7 @@ const bulkDeleteStudents = async () => {
           <div className="filter-section">
             <input type="text" placeholder="Enter Year" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} />
             <input type="text" placeholder="Enter Dept" value={filterDept} onChange={(e) => setFilterDept(e.target.value)} />
+            <input type="text" placeholder="Enter FA Name" value={filterFaName} onChange={(e) => setFilterFaName(e.target.value)}/>
             <button onClick={bulkDeleteStudents} disabled={loadingDelete} className="bulk-delete-btn"> {loadingDelete ? "Deleting..." : "Bulk Delete Students"}</button>
 
           </div>
@@ -258,7 +319,7 @@ const bulkDeleteStudents = async () => {
           <table>
             <thead>
               <tr>
-                <th>SID</th><th>Name</th><th>Email</th><th>Dept Points</th><th>Institute Points</th><th>Other Points</th><th>Total</th><th>Actions</th>
+                <th>SID</th><th>Name</th><th>Email</th><th>FA Name</th><th>Dept Points</th><th style={{ width: "5%" }}>Institute Points</th><th>Other Points</th><th>Total</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -266,15 +327,15 @@ const bulkDeleteStudents = async () => {
                 <tr key={s.sid}>
                   <td>{s.sid}</td>
                   <td>{s.name}</td>
-                  <td>{s.emailID}</td>
+                  <td>{s.email}</td>
+                  <td>{s.faName}</td>
                   <td>{s.deptPoints}</td>
                   <td>{s.institutePoints}</td>
                   <td>{s.otherPoints}</td>
                   <td>{s.activityPoints}</td>
-                  <td>
+                  <td className="actions-cell">
                     <button onClick={() => setEditStudent({...s})}>Edit</button>
-                    <br />
-                    <button style={{ marginTop: 10 }} onClick={() => deleteStudent(s.sid)}>Delete</button>
+                    <button onClick={() => deleteStudent(s.sid)}>Delete</button>
                   </td>
                 </tr>
               ))}
@@ -296,12 +357,8 @@ const bulkDeleteStudents = async () => {
       {view === "fas" && (
         <div className="filter-section">
           <br />
-          <input
-            type="text"
-            placeholder="Search by Department Name"
-            value={filterDeptFa}
-            onChange={(e) => setFilterDeptFa(e.target.value)}
-          />
+          <input type="text" placeholder="Search by Department Name" value={filterDeptFa} onChange={(e) => setFilterDeptFa(e.target.value)}/>
+          <input type="text" placeholder="Enter FA Name" value={filterFaName} onChange={(e) => setFilterFaName(e.target.value)}/>
           <table>
             <thead>
               <tr><th>Name</th><th>Email</th><th>Department Name</th></tr>
@@ -347,9 +404,13 @@ const bulkDeleteStudents = async () => {
             <div className="form-group">
               <label>Email</label>
               <input
-                value={editStudent.emailID}
+                value={editStudent.email || editStudent.emailID || ''}
                 onChange={(e) =>
-                  setEditStudent({ ...editStudent, emailID: e.target.value })
+                  setEditStudent({ 
+                    ...editStudent, 
+                    email: e.target.value,
+                    emailID: e.target.value
+                  })
                 }
               />
             </div>
@@ -358,13 +419,18 @@ const bulkDeleteStudents = async () => {
               <label>Department Points</label>
               <input
                 type="number"
-                value={editStudent.deptPoints}
-                onChange={(e) =>
+                value={editStudent.deptPoints || 0}
+                min="0"
+                onKeyDown={(e) => {
+                  if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+                }}
+                onChange={(e) => {
+                  const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                   setEditStudent({
                     ...editStudent,
-                    deptPoints: parseInt(e.target.value),
-                  })
-                }
+                    deptPoints: isNaN(val) ? 0 : val,  // Extra safety check
+                  });
+                }}
               />
             </div>
 
@@ -372,13 +438,18 @@ const bulkDeleteStudents = async () => {
               <label>Institute Points</label>
               <input
                 type="number"
-                value={editStudent.institutePoints}
-                onChange={(e) =>
+                value={editStudent.institutePoints || 0}
+                min="0"
+                onKeyDown={(e) => {
+                  if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+                }}
+                onChange={(e) => {
+                  const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
                   setEditStudent({
                     ...editStudent,
-                    institutePoints: parseInt(e.target.value),
-                  })
-                }
+                    institutePoints: isNaN(val) ? 0 : val,  // Extra safety check
+                  });
+                }}
               />
             </div>
 
@@ -386,13 +457,18 @@ const bulkDeleteStudents = async () => {
               <label>Other Points</label>
               <input
                 type="number"
-                value={editStudent.otherPoints}
-                onChange={(e) =>
-                  setEditStudent({
-                    ...editStudent,
-                    otherPoints: parseInt(e.target.value),
-                  })
-                }
+                value={editStudent.otherPoints || 0}
+                min="0"
+                onKeyDown={(e) => {
+                  if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+                }}
+                onChange={(e) => {
+                    const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                    setEditStudent({
+                      ...editStudent,
+                      otherPoints: isNaN(val) ? 0 : val,  // Extra safety check
+                    });
+                  }}
               />
             </div>
 

@@ -2,11 +2,13 @@ package com.example.student_activity_points.controller;
 
 import com.example.student_activity_points.domain.Departments;
 import com.example.student_activity_points.domain.Fa;
+import com.example.student_activity_points.security.AuthUser;
 import com.example.student_activity_points.service.DepartmentService;
 import com.example.student_activity_points.service.FaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,13 @@ import org.slf4j.LoggerFactory;
 @CrossOrigin(origins = "http://localhost:5173")
 public class FaController {
 
+    private AuthUser currentUser() {
+        return (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
     @Autowired
     private FaService faService;
 
@@ -28,9 +37,13 @@ public class FaController {
 
     private static final Logger log = LoggerFactory.getLogger(FaController.class);
 
-    @GetMapping("/{faid}")
-    public ResponseEntity<?> getFaById(@PathVariable Long faid) {
+    @GetMapping()
+    public ResponseEntity<?> getFaById() {
+        Long faid = null;
         try {
+
+            faid = currentUser().getFaid();
+
             Optional<Fa> fa = faService.getFaById(faid);
             
             if (fa.isEmpty()) {

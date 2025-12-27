@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import Announcements from "./Announcements";
 import { toast, Toaster } from "react-hot-toast"; 
 
@@ -16,37 +16,33 @@ const AnnouncementDetail = () => {
   const [announcement, setAnnouncement] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Get the announcement ID from the URL
-  const token=localStorage.getItem("token");
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
-          console.error("No user data in localStorage.");
           toast.error("User not found. Please log in.");
           return;
         }
 
         const user = JSON.parse(storedUser);
         if (!user?.faid) {
-          console.error("FA ID missing in user data:", user);
           toast.error("Invalid FA ID.");
           return;
         }
 
-        const response = await axios.get(`/api/fa/${user.faid}/announcements/${id}`,{
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          }
-        });
+        const response = await axiosInstance.get(
+        `/api/fa/${user.faid}/announcements/${id}`
+      );
+
         if (response.status === 200) {
           setAnnouncement(response.data);
         } else {
           toast.error("Error loading announcement!");
         }
       } catch (error) {
-        console.error("Error fetching announcement", error);
         toast.error("Failed to fetch announcement!");
       } finally {
         setLoading(false);
@@ -64,7 +60,6 @@ const AnnouncementDetail = () => {
   if (!announcement) {
     return <div>Error: Announcement not found!</div>;
   }
-  console.log(announcement)
   return (
     <div>
       <div className="content"><Toaster />

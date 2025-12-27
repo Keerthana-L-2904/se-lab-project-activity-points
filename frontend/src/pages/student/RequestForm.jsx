@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import "./request.css";
 import upload_area from "../../assets/upload_area.png";
 import { toast, Toaster } from "react-hot-toast";
 
 const RequestForm = () => {
-  const token = localStorage.getItem("token");
+  
   const { user } = useContext(AuthContext);
   const [activities, setActivities] = useState([]);
-  const [isSubmitting,setIsSubmitting] =useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     category: "",
     activity: "",
@@ -28,13 +28,11 @@ const RequestForm = () => {
   useEffect(() => {
     const fetchActivityData = async () => {
       try {
-        const response = await axios.get("/api/student/manage-activities",{
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const response = await axiosInstance.get(
+          "/api/student/manage-activities"
+        );
+
         if (response.status === 200) {
-          
           const today = new Date();
           const updatedActivities = response.data.map((activity) => {
             const startDate = new Date(activity.start_date);
@@ -50,12 +48,10 @@ const RequestForm = () => {
           });
 
           setActivities(updatedActivities);
-          
         } else {
           toast.error("Error loading activities!");
         }
       } catch (error) {
-        console.error("Error fetching activities", error);
         toast.error("Failed to fetch activities!");
       }
     };
@@ -76,7 +72,6 @@ const RequestForm = () => {
     const selectedActivity = activities.find(
       (act) => act.name === selectedActivityName
     );
-    console.log(selectedActivity)
 
     if (selectedActivity) {
       setFormData((prev) => ({
@@ -116,7 +111,6 @@ const RequestForm = () => {
   };
 
   const validateForm = () => {
-    console.log(formData.type)
     let errors = {};
     if (!formData.isCustomActivity && !formData.activity.trim())
       errors.activity = "Activity selection is required";
@@ -133,7 +127,7 @@ const RequestForm = () => {
     return errors;
   };
 
-  // 🔹 Submit
+  // 🔹 Submit - FIXED
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
@@ -145,7 +139,9 @@ const RequestForm = () => {
         const formPayload = new FormData();
 
         setIsSubmitting(true);
-        formPayload.append("sid", sid);
+        
+        // ✅ Append all form fields
+        formPayload.append("sid", sid); // Use actual user sid, not hardcoded
         formPayload.append("date", new Date().toISOString());
         formPayload.append("status", "Pending");
         formPayload.append("decisionDate", new Date().toISOString());
@@ -160,21 +156,22 @@ const RequestForm = () => {
         formPayload.append("location", formData.location);
         formPayload.append("points", formData.points);
 
-
+        // ✅ Append the file
         if (formData.proof) {
           formPayload.append("proof", formData.proof);
         }
 
-        const response = await fetch("http://localhost:8080/requests", {
-          method: "POST",
-          body: formPayload,
+        // ✅ FIXED: Use axios with proper headers
+        const response = await axiosInstance.post("/requests", formPayload, {
           headers: {
-            "Authorization": `Bearer ${token}`,
-          },
+            'Content-Type': 'multipart/form-data'
+          }
         });
-
-        if (response.ok) {
+        // ✅ FIXED: Axios uses response.status, not response.ok
+        if (response.status === 200 || response.status === 201) {
           toast.success("Request Submitted Successfully!");
+          
+          // Reset form
           setFormData({
             category: "",
             activity: "",
@@ -185,18 +182,26 @@ const RequestForm = () => {
             description: "",
             proof: null,
             isCustomActivity: false,
+            points: "",
           });
+          
+          // Reset file input
+          const fileInput = document.getElementById('file');
+          if (fileInput) fileInput.value = '';
+          
         } else {
-          const errorData = await response.json();
-          toast.error(
-            `Failed to submit request: ${errorData.message || "Unknown error"}`
-          );
+          const errorMsg = response.data?.message || "Unknown error";
+          toast.error(`Failed to submit request: ${errorMsg}`);
         }
+        
       } catch (error) {
-        console.error("Error submitting request:", error);
-        toast.error("An error occurred while submitting the request.");
-      }
-      finally{
+        const errorMsg = error.response?.data?.message || 
+                        error.response?.data || 
+                        error.message || 
+                        "An error occurred while submitting the request";
+        
+        toast.error(errorMsg);
+      } finally {
         setIsSubmitting(false);
       }
     }
@@ -271,7 +276,6 @@ const RequestForm = () => {
               Back to Listed
             </button>
           )}
-
           </div>
 
         {/* CATEGORY */}
@@ -283,9 +287,9 @@ const RequestForm = () => {
                 type="radio"
                 name="category"
                 value="Institute"
-                checked={formData.category=== "Institute"}
+                checked={formData.category === "Institute"}
                 onChange={handleChange}
-                disabled={!formData.isCustomActivity} // ⬅ disables when auto-filled
+                disabled={!formData.isCustomActivity}
               />
               Institutional
             </label>
@@ -296,7 +300,7 @@ const RequestForm = () => {
                 value="Department"
                 checked={formData.category === "Department"}
                 onChange={handleChange}
-                disabled={!formData.isCustomActivity} // ⬅ disables when auto-filled
+                disabled={!formData.isCustomActivity}
               />
               Departmental
             </label>
@@ -307,14 +311,13 @@ const RequestForm = () => {
                 value="Other"
                 checked={formData.category === "Other"}
                 onChange={handleChange}
-                disabled={!formData.isCustomActivity} // ⬅ disables when auto-filled
+                disabled={!formData.isCustomActivity}
               />
               Other
             </label>
           </div>
           {errors.category && <span className="error">{errors.category}</span>}
         </div>
-
 
           {/* ACTIVITY NAME (only when custom) */}
           {formData.isCustomActivity && (
@@ -332,6 +335,7 @@ const RequestForm = () => {
               )}
             </div>
           )}
+          
           {/* DATE */}
           <div>
             <p>Activity Date:</p>
@@ -340,22 +344,21 @@ const RequestForm = () => {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              max={new Date().toISOString().split("T")[0]} // ⬅ disables future dates
+              max={new Date().toISOString().split("T")[0]}
               required={true}
             />
-
             {errors.date && <span className="error">{errors.date}</span>}
           </div>
+          
           {/* POINTS */}
-            <input
+          <input
             type="number"
             name="points"
             placeholder="Points"
             value={formData.points}
             onChange={handleChange}
-            disabled={!formData.isCustomActivity} // ⬅ disables only when auto-filled
+            disabled={!formData.isCustomActivity}
           />
-
 
           {/* LOCATION */}
           <div>
@@ -387,7 +390,7 @@ const RequestForm = () => {
 
           {/* DESCRIPTION */}
           <div>
-             <p>Description:</p>
+            <p>Description:</p>
             <textarea
               name="description"
               placeholder="Description of the event"
@@ -421,8 +424,8 @@ const RequestForm = () => {
             {errors.proof && <span className="error">{errors.proof}</span>}
           </div>
 
-          <button type="submit" className="submit-btn" disabled ={isSubmitting}>
-            {isSubmitting ? "Submitting.." :"Submit"}
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
       </main>

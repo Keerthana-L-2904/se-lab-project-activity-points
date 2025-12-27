@@ -45,16 +45,16 @@ public interface StudentRepository extends CrudRepository<Student, String> {
     List<StudentWithMandatoryDTO> findStudentsWithMandatoryCount(@Param("faid") int faid);
         
     @Query("SELECT new com.example.student_activity_points.dto.StudentWithMandatoryDTO(" +
-           "s, COUNT(CASE WHEN a.mandatory = 1 THEN sa.actID END)) " +
-           "FROM Student s " +
-           "LEFT JOIN StudentActivity sa ON s.sid = sa.sid " +
-           "LEFT JOIN Activity a ON sa.actID = a.actID " +
-           "WHERE s.FAID = :faid AND LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
-           "GROUP BY s")
-    List<StudentWithMandatoryDTO> searchStudentsByFAIDAndName(
-            @Param("faid") int faid,
-            @Param("name") String name
-    );
+       "s, COUNT(CASE WHEN a.mandatory = 1 THEN sa.actID END)) " +
+       "FROM Student s " +
+       "LEFT JOIN StudentActivity sa ON s.sid = sa.sid " +
+       "LEFT JOIN Activity a ON sa.actID = a.actID " +
+       "WHERE s.FAID = :faid AND LOWER(s.name) LIKE LOWER(CONCAT('%', :name, '%')) ESCAPE '\\' " +
+       "GROUP BY s")
+List<StudentWithMandatoryDTO> searchStudentsByFAIDAndName(
+        @Param("faid") int faid,
+        @Param("name") String name
+);
 
     @Query("SELECT new com.example.student_activity_points.dto.StudentWithMandatoryDTO(" +
     "s, COUNT(CASE WHEN a.mandatory = 1 THEN sa.actID END)) " +

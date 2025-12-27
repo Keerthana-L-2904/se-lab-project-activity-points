@@ -9,4 +9,8 @@ public class TestController {
     public String test() {
         return "CORS is working!";
     }
+    @GetMapping("/test-error")
+        public void triggerError() {
+    throw new RuntimeException("This internal error should not be seen by the client");
+    }
 }

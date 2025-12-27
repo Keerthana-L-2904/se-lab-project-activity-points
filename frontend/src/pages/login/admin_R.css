@@ -53,3 +53,46 @@
     background-color: #16a34a;
   }
   
+  /* Alert styles */
+.alert {
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.alert-danger {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+.alert strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.alert p {
+  margin: 5px 0 0 0;
+}
+
+/* CAPTCHA container */
+.captcha-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+/* Disabled button styles */
+button:disabled {
+  background: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}

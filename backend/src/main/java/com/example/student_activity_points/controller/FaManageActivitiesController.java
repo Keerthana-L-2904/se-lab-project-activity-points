@@ -87,6 +87,10 @@ public class FaManageActivitiesController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Activity name is required");
             }
+            if(activity.getPoints()<0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Points must be positive");
+            }
 
             Activity savedActivity = activityRepository.save(activity);
             log.info("Activity added successfully by FA: {}", activity.getName());
@@ -113,6 +117,9 @@ public class FaManageActivitiesController {
                 log.warn("Activity not found for update: {}", id);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Activity not found");
+            }
+            if(updatedActivity.getPoints()<0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Points must be positive.");
             }
 
             Activity existingActivity = existingActivityOpt.get();

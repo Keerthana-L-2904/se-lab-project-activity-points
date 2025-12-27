@@ -1,6 +1,10 @@
 package com.example.student_activity_points.security;
 
-import com.example.student_activity_points.filters.LoginRateLimitFilter; // 🔐 ADDED
+import com.example.student_activity_points.filters.LoginRateLimitFilter;
+import com.example.student_activity_points.filters.LoginRateLimitFilterStudFa;
+import com.example.student_activity_points.filters.CsrfFilter;
+ 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +30,13 @@ public class SecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
-    private LoginRateLimitFilter loginRateLimitFilter; // 🔐 ADDED
+    private LoginRateLimitFilter loginRateLimitFilter; 
+
+    @Autowired
+    private CsrfFilter csrfFilter;
+
+    @Autowired
+    private LoginRateLimitFilterStudFa loginRateLimitFilterStudFa;
 
     private static final String CSP_POLICY_DEV =
         "default-src 'self'; " +
@@ -46,9 +56,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // JWT via Authorization header → CSRF not required
             .csrf(csrf -> csrf.disable())
-
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
             .headers(headers -> headers
@@ -68,14 +76,26 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
+                // ✅ Allow login endpoints (no auth required)
+                .requestMatchers("/api/auth/login-student").permitAll()
+                .requestMatchers("/api/auth/login-fa").permitAll()
+                .requestMatchers("/api/auth/refresh").permitAll()  // ✅ Allow refresh for Student/FA
+                .requestMatchers("/api/auth/logout").permitAll()   // ✅ Allow logout for Student/FA
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/api/student/**").hasRole("STUDENT")
-                .requestMatchers("/api/fa/**").hasRole("FA")
+                // ✅ Admin endpoints
                 .requestMatchers("/admin/login").permitAll()
                 .requestMatchers("/admin/forgot-password").permitAll()
                 .requestMatchers("/admin/reset-password").permitAll()
+                .requestMatchers("/admin/refresh").permitAll()
+                .requestMatchers("/admin/logout").permitAll()
+                
+                .requestMatchers("/error").permitAll()
+                
+                // ✅ Protected endpoints (require authentication)
+                .requestMatchers("/api/student/**").hasRole("STUDENT")
+                .requestMatchers("/api/fa/**").hasRole("FA")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                
                 .anyRequest().authenticated()
             )
 
@@ -83,15 +103,25 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
 
-        // 🔐 VERY IMPORTANT: Order of filters
+        // ✅ Add filters in correct order
         http.addFilterBefore(
-                loginRateLimitFilter,
-                UsernamePasswordAuthenticationFilter.class
+            csrfFilter,
+            UsernamePasswordAuthenticationFilter.class
         );
 
         http.addFilterBefore(
-                jwtRequestFilter,
-                UsernamePasswordAuthenticationFilter.class
+            loginRateLimitFilterStudFa,
+            UsernamePasswordAuthenticationFilter.class
+        );
+    
+        http.addFilterBefore(
+            loginRateLimitFilter,
+            UsernamePasswordAuthenticationFilter.class
+        );
+
+        http.addFilterBefore(
+            jwtRequestFilter,
+            UsernamePasswordAuthenticationFilter.class
         );
 
         return http.build();
@@ -105,7 +135,6 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
@@ -116,14 +145,15 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of(
                 "Content-Type",
                 "Authorization",
-                "X-Requested-With"
+                "X-Requested-With",
+                "X-CSRF-Token"
         ));
         configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("X-CSRF-Token");  // ✅ Expose CSRF token header
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

@@ -12,24 +12,20 @@ const Announcements = () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) {
-        console.error("No user data in localStorage.");
         setError("User not found. Please log in.");
         return;
       }
 
       const user = JSON.parse(storedUser);
       if (!user?.sid) {
-        console.error("Student ID missing in user data:", user);
         setError("Invalid student ID.");
         return;
       }
 
-      const response = await fetch(`http://localhost:8080/api/student/${user.sid}/announcements`,{
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        }
-        
-      });
+      const response = await axiosInstance.get(
+          `/api/student/${user.sid}/announcements`
+        );
+
       if (!response.ok) throw new Error("Failed to fetch announcements.");
 
       const data = await response.json();

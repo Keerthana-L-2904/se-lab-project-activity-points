@@ -127,7 +127,11 @@ public class FaApprovalsController {
             }
 
             log.debug("Retrieved {} requests for FA: {}", responseList.size(), email);
-            return ResponseEntity.ok(responseList);
+            if (responseList.isEmpty()) {
+                    return ResponseEntity.ok("No approvals available");
+                }
+
+                return ResponseEntity.ok(responseList);
 
         } catch (Exception ex) {
             log.error("Error fetching FA details for: {}", email, ex);

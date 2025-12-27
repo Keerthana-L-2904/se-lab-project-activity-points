@@ -4,10 +4,12 @@ import com.example.student_activity_points.domain.Announcements;
 import com.example.student_activity_points.domain.Student;
 import com.example.student_activity_points.domain.StudentActivity;
 import com.example.student_activity_points.dto.StudentWithMandatoryDTO;
+import com.example.student_activity_points.security.AuthUser;
 import com.example.student_activity_points.service.StudentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -20,18 +22,26 @@ import org.slf4j.LoggerFactory;
 @CrossOrigin(origins = "http://localhost:5173")
 public class StudentController {
 
+    private AuthUser currentUser() {
+        return (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
     @Autowired
     private StudentService studentService;
 
     private static final Logger log = LoggerFactory.getLogger(StudentController.class);
 
-    @GetMapping("student/{studentID}")
-    public ResponseEntity<?> getStudent(@PathVariable String studentID) {
+    @GetMapping("student")
+    public ResponseEntity<?> getStudent() {
+        String studentID=null;
         try {
+            studentID = currentUser().getSid();
             return studentService.getStudentWithFA(studentID)
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
                     .orElseGet(() -> {
-                        log.warn("Student not found: {}", studentID);
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body("Student not found");
                     });
@@ -43,9 +53,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/{studentID}/department-points")
-    public ResponseEntity<?> getDepartmentPoints(@PathVariable String studentID) {
+    @GetMapping("student/department-points")
+    public ResponseEntity<?> getDepartmentPoints() {
+        String studentID=null;
         try {
+            studentID = currentUser().getSid();
             Integer points = studentService.getDepartmentPoints(studentID);
             
             if (points == null) {
@@ -63,9 +75,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/{studentID}/name")
-    public ResponseEntity<?> getStudentName(@PathVariable String studentID) {
+    @GetMapping("student/name")
+    public ResponseEntity<?> getStudentName() {
+        String studentID=null;
         try {
+            studentID = currentUser().getSid();
             Optional<Student> student = studentService.getStudentById(studentID);
             
             if (student.isEmpty()) {
@@ -83,9 +97,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/{studentID}/institutional-points")
-    public ResponseEntity<?> getInstitutionalPoints(@PathVariable String studentID) {
+    @GetMapping("student/institutional-points")
+    public ResponseEntity<?> getInstitutionalPoints() {
+        String studentID=null;
         try {
+            studentID = currentUser().getSid();
             Integer points = studentService.getInstitutionalPoints(studentID);
             
             if (points == null) {
@@ -103,9 +119,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/{studentID}/activity-points")
-    public ResponseEntity<?> getActivityPoints(@PathVariable String studentID) {
+    @GetMapping("student/activity-points")
+    public ResponseEntity<?> getActivityPoints() {
+        String studentID = null;
         try {
+            studentID = currentUser().getSid();
             Integer points = studentService.getActivityPoints(studentID);
             
             if (points == null) {
@@ -123,9 +141,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/{studentID}/activities")
-    public ResponseEntity<?> getStudentActivities(@PathVariable String studentID) {
+    @GetMapping("student/activities")
+    public ResponseEntity<?> getStudentActivities() {
+        String studentID = null;
         try {
+            studentID = currentUser().getSid();
             List<StudentActivity> activities = studentService.getStudentActivities(studentID);
             log.debug("Retrieved {} activities for student: {}", activities.size(), studentID);
             return ResponseEntity.ok(activities);
@@ -137,9 +157,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/{studentID}/latest-activity")
-    public ResponseEntity<?> getLatestActivity(@PathVariable String studentID) {
+    @GetMapping("student/latest-activity")
+    public ResponseEntity<?> getLatestActivity() {
+        String studentID = null;
         try {
+            studentID = currentUser().getSid();
             StudentActivity activity = studentService.getLatestActivity(studentID);
             
             if (activity == null) {
@@ -157,7 +179,7 @@ public class StudentController {
         }
     }
 
-    @GetMapping("student/announcements")
+    @GetMapping("student/announcements/HELLO")
     public ResponseEntity<?> getAnnouncements() {
         try {
             List<Announcements> announcements = studentService.getAnnouncements();
@@ -171,10 +193,12 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/fa/student-list/{FAID}")
-    public ResponseEntity<?> getStudentsByFAID(@PathVariable int FAID) {
+    @GetMapping("/fa/student-list")
+    public ResponseEntity<?> getStudentsByFAID() {
+        Long FAID = null;
         try {
-            List<Student> students = studentService.getStudentsByFAID(FAID);
+            FAID= currentUser().getFaid();
+            List<Student> students = studentService.getStudentsByFAID(FAID.intValue());
             log.debug("Retrieved {} students for FA: {}", students.size(), FAID);
             return ResponseEntity.ok(students);
 
@@ -185,10 +209,12 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/fa/student-list/{FAID}/with-mandatory")
-    public ResponseEntity<?> getStudentsByFAIDWithMandatory(@PathVariable int FAID) {
+    @GetMapping("/fa/student-list/with-mandatory")
+    public ResponseEntity<?> getStudentsByFAIDWithMandatory() {
+        Long FAID = null;
         try {
-            List<StudentWithMandatoryDTO> students = studentService.getStudentsByFAIDWithMandatoryCount(FAID);
+            FAID = currentUser().getFaid();
+            List<StudentWithMandatoryDTO> students = studentService.getStudentsByFAIDWithMandatoryCount(FAID.intValue());
             log.debug("Retrieved {} students with mandatory count for FA: {}", students.size(), FAID);
             return ResponseEntity.ok(students);
 
@@ -199,17 +225,18 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/search")
+    @GetMapping("fa/student-list/search")
     public ResponseEntity<?> searchStudents(
-            @PathVariable int FAID,
             @RequestParam String name) {
+                Long FAID = null;
         try {
+            FAID =currentUser().getFaid();
             if (name == null || name.trim().isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Search name is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.searchStudentsByFAIDAndName(FAID, name);
+            List<StudentWithMandatoryDTO> students = studentService.searchStudentsByFAIDAndName(FAID.intValue(), name);
             log.debug("Search found {} students for FA: {} with name: {}", students.size(), FAID, name);
             return ResponseEntity.ok(students);
 
@@ -220,17 +247,18 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/search-by-mandatory")
+    @GetMapping("fa/student-list/search-by-mandatory")
     public ResponseEntity<?> searchByMandatoryCount(
-            @PathVariable int FAID,
             @RequestParam Long mandatoryCount) {
+                Long FAID = null;
         try {
+            FAID = currentUser().getFaid();
             if (mandatoryCount == null || mandatoryCount < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid mandatory count is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.searchStudentsByMandatoryCount(FAID, mandatoryCount);
+            List<StudentWithMandatoryDTO> students = studentService.searchStudentsByMandatoryCount(FAID.intValue(), mandatoryCount);
             log.debug("Search found {} students for FA: {} with mandatory count: {}", 
                      students.size(), FAID, mandatoryCount);
             return ResponseEntity.ok(students);
@@ -242,10 +270,12 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/sort-by-asc")
-    public ResponseEntity<?> sortByAsc(@PathVariable int FAID) {
+    @GetMapping("fa/student-list/sort-by-asc")
+    public ResponseEntity<?> sortByAsc() {
+        Long FAID = null;
         try {
-            List<StudentWithMandatoryDTO> students = studentService.getStudentsByFAIDWithMandatoryCountAsc(FAID);
+            FAID = currentUser().getFaid();
+            List<StudentWithMandatoryDTO> students = studentService.getStudentsByFAIDWithMandatoryCountAsc(FAID.intValue());
             log.debug("Retrieved {} students sorted ascending for FA: {}", students.size(), FAID);
             return ResponseEntity.ok(students);
 
@@ -256,10 +286,12 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/sort-by-desc")
-    public ResponseEntity<?> sortByDesc(@PathVariable int FAID) {
+    @GetMapping("fa/student-list/sort-by-desc")
+    public ResponseEntity<?> sortByDesc() {
+        Long FAID = null;
         try {
-            List<StudentWithMandatoryDTO> students = studentService.getStudentsByFAIDWithMandatoryCountDesc(FAID);
+            FAID = currentUser().getFaid();
+            List<StudentWithMandatoryDTO> students = studentService.getStudentsByFAIDWithMandatoryCountDesc(FAID.intValue());
             log.debug("Retrieved {} students sorted descending for FA: {}", students.size(), FAID);
             return ResponseEntity.ok(students);
 
@@ -270,17 +302,18 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/filter-dept-points-above")
+    @GetMapping("fa/student-list/filter-dept-points-above")
     public ResponseEntity<?> filterDeptPointsAbove(
-            @PathVariable int FAID,
             @RequestParam Long points) {
+                Long FAID = null;
         try {
+            FAID = currentUser().getFaid();
             if (points == null || points < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid points value is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.filterDeptPointsAbove(FAID, points);
+            List<StudentWithMandatoryDTO> students = studentService.filterDeptPointsAbove(FAID.intValue(), points);
             log.debug("Filtered {} students with dept points above {} for FA: {}", 
                      students.size(), points, FAID);
             return ResponseEntity.ok(students);
@@ -292,17 +325,18 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/filter-dept-points-below")
+    @GetMapping("fa/student-list/filter-dept-points-below")
     public ResponseEntity<?> filterDeptPointsBelow(
-            @PathVariable int FAID,
             @RequestParam Long points) {
+                Long FAID = null;
         try {
+            FAID = currentUser().getFaid();
             if (points == null || points < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid points value is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.filterDeptPointsBelow(FAID, points);
+            List<StudentWithMandatoryDTO> students = studentService.filterDeptPointsBelow(FAID.intValue(), points);
             log.debug("Filtered {} students with dept points below {} for FA: {}", 
                      students.size(), points, FAID);
             return ResponseEntity.ok(students);
@@ -314,17 +348,18 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/filter-inst-points-above")
+    @GetMapping("fa/student-list/filter-inst-points-above")
     public ResponseEntity<?> filterInstPointsAbove(
-            @PathVariable int FAID,
             @RequestParam Long points) {
+                Long FAID = null;
         try {
+            FAID = currentUser().getFaid();
             if (points == null || points < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid points value is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.filterInstPointsAbove(FAID, points);
+            List<StudentWithMandatoryDTO> students = studentService.filterInstPointsAbove(FAID.intValue(), points);
             log.debug("Filtered {} students with inst points above {} for FA: {}", 
                      students.size(), points, FAID);
             return ResponseEntity.ok(students);
@@ -336,17 +371,19 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/filter-inst-points-below")
+    @GetMapping("fa/student-list/filter-inst-points-below")
     public ResponseEntity<?> filterInstPointsBelow(
-            @PathVariable int FAID,
+
             @RequestParam Long points) {
+                Long FAID = null;
         try {
+            FAID = currentUser().getFaid();
             if (points == null || points < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid points value is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.filterInstPointsBelow(FAID, points);
+            List<StudentWithMandatoryDTO> students = studentService.filterInstPointsBelow(FAID.intValue(), points);
             log.debug("Filtered {} students with inst points below {} for FA: {}", 
                      students.size(), points, FAID);
             return ResponseEntity.ok(students);
@@ -358,17 +395,19 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/filter-activity-points-above")
+    @GetMapping("fa/student-list/filter-activity-points-above")
     public ResponseEntity<?> filterActivityPointsAbove(
-            @PathVariable int FAID,
             @RequestParam Long points) {
+                Long FAID = null;
+
         try {
+            FAID = currentUser().getFaid();
             if (points == null || points < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid points value is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.filterActivityPointsAbove(FAID, points);
+            List<StudentWithMandatoryDTO> students = studentService.filterActivityPointsAbove(FAID.intValue(), points);
             log.debug("Filtered {} students with activity points above {} for FA: {}", 
                      students.size(), points, FAID);
             return ResponseEntity.ok(students);
@@ -380,17 +419,18 @@ public class StudentController {
         }
     }
 
-    @GetMapping("fa/student-list/{FAID}/filter-activity-points-below")
+    @GetMapping("fa/student-list/filter-activity-points-below")
     public ResponseEntity<?> filterActivityPointsBelow(
-            @PathVariable int FAID,
             @RequestParam Long points) {
+                Long FAID = null;
         try {
+            FAID = currentUser().getFaid();
             if (points == null || points < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Valid points value is required");
             }
 
-            List<StudentWithMandatoryDTO> students = studentService.filterActivityPointsBelow(FAID, points);
+            List<StudentWithMandatoryDTO> students = studentService.filterActivityPointsBelow(FAID.intValue(), points);
             log.debug("Filtered {} students with activity points below {} for FA: {}", 
                      students.size(), points, FAID);
             return ResponseEntity.ok(students);
@@ -403,16 +443,18 @@ public class StudentController {
     }
 
     @GetMapping("/fa/student-details/{sid}")
-    public ResponseEntity<?> getStudentBySid(@PathVariable String sid) {
+    public ResponseEntity<?> getStudentBySid(@PathVariable String sid) 
+    {
+        Long faid = currentUser().getFaid();
+      
         try {
             Optional<Student> student = studentService.getStudentById(sid);
             
-            if (student.isEmpty()) {
-                log.warn("Student not found: {}", sid);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("error", "Student not found"));
-            }
-
+            if (student.isEmpty()) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Student not found"));}
+            if (student.get().getFaid() != faid.intValue()) 
+                {log.warn("FA {} attempted to access student {} without authorization", faid, sid);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Access denied"));
+    }
             List<StudentActivity> activities = studentService.getStudentActivities(sid);
             
             Map<String, Object> response = new HashMap<>();

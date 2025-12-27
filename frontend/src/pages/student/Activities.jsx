@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./activities.css";
 import { FaStar } from "react-icons/fa";
 import { toast, Toaster } from "react-hot-toast";
+import axiosInstance from "../../utils/axiosConfig";
 
 const Activities = () => {
   const [activities, setActivities] = useState([]);
@@ -12,31 +13,23 @@ const Activities = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5; // You can adjust this (e.g. 5, 10 per page)
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/activities", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch activities");
-        }
-        console.log("Fetched activities:", response);
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Fetched activities:", data);
-        setActivities(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        toast.error("Error fetching activities: " + error.message);
-        setLoading(false);
-      });
-  }, []);
+      useEffect(() => {
+        const fetchActivities = async () => {
+          try {
+            const response = await axiosInstance.get("/api/activities");
+            setActivities(response.data);
+          } catch (error) {
+            const message =
+              error.response?.data?.message || "Failed to fetch activities";
+            setError(message);
+            toast.error("Error fetching activities: " + message);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchActivities();
+      }, []);
 
   if (loading) return <p>Loading activities...</p>;
   if (error) return <p>Error: {error}</p>;

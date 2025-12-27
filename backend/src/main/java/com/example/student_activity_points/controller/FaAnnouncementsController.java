@@ -3,9 +3,11 @@ package com.example.student_activity_points.controller;
 import com.example.student_activity_points.domain.Announcements;
 import com.example.student_activity_points.repository.AnnouncementsRepository;
 import com.example.student_activity_points.repository.FARepository;
+import com.example.student_activity_points.security.AuthUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,13 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/api/fa")
 public class FaAnnouncementsController {
 
+    private AuthUser currentUser() {
+        return (AuthUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
     @Autowired
     private AnnouncementsRepository announcementsRepository;
     
@@ -25,9 +34,11 @@ public class FaAnnouncementsController {
 
     private static final Logger log = LoggerFactory.getLogger(FaAnnouncementsController.class);
 
-    @GetMapping("/{faid}/announcements")
-    public ResponseEntity<?> getAnnouncements(@PathVariable Long faid) {
+    @GetMapping("/announcements")
+    public ResponseEntity<?> getAnnouncements() {
+        Long faid = null;
         try {
+            faid = currentUser().getFaid();
             List<Announcements> announcements = announcementsRepository.findByFAID(faid.intValue());
             log.debug("Retrieved {} announcements for FA: {}", announcements.size(), faid);
             return ResponseEntity.ok(announcements);
@@ -64,8 +75,10 @@ public class FaAnnouncementsController {
     }
 
     @GetMapping("/{faid}/announcements/{aid}")
-    public ResponseEntity<?> getAnnouncement(@PathVariable Long faid, @PathVariable Long aid) {
+    public ResponseEntity<?> getAnnouncement(@PathVariable Long aid) {
+        Long faid = null;
         try {
+            faid = currentUser().getFaid();
             Announcements announcement = announcementsRepository.findByAid(aid);
 
             if (announcement == null) {

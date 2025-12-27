@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import "./student.css";
 import ActivityModal from "../../components/ActivityModal/ActivityModal";
+import axiosInstance from "../../utils/axiosConfig";
 
 const Tracking = () => {
   const { user } = useContext(AuthContext);
@@ -12,7 +13,7 @@ const Tracking = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [status, setStatus] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const token = localStorage.getItem("token");
+  
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -25,33 +26,28 @@ const Tracking = () => {
     return parts.length > 1 ? parts[1].toUpperCase() : username.toUpperCase();
   };
 
-  const sid = getSid(user.sid);
+      const sid = getSid(user?.sid);
 
-  useEffect(() => {
-    if (!sid) return;
 
-    fetch(`http://localhost:8080/requests/student/${sid}`,{
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    }
-       
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setTrackingRequests(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
-  }, [sid]);
+        useEffect(() => {
+          if (!sid) return;
+
+          const fetchTrackingRequests = async () => {
+            try {
+              const response = await axiosInstance.get("/requests/student");
+              setTrackingRequests(response.data);
+            } catch (error) {
+              const message =
+                error.response?.data?.message || "Failed to fetch data";
+              setError(message);
+            } finally {
+              setLoading(false);
+            }
+          };
+
+          fetchTrackingRequests();
+        }, [sid]);
+
 
   const getStatusClass = (status) => {
     switch (status) {

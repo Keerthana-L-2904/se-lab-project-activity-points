@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import { toast, Toaster } from "react-hot-toast";
 import "./forget.css"; // new css file
 
@@ -16,7 +16,7 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         "http://localhost:8080/admin/forgot-password",
         null,
         { params: { email } }

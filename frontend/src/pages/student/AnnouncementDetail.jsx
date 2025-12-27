@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import Announcements from "./Announcements";
 import { toast, Toaster } from "react-hot-toast"; 
 
@@ -22,30 +22,26 @@ const AnnouncementDetail = () => {
       try {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
-          console.error("No user data in localStorage.");
           toast.error("User not found. Please log in.");
           return;
         }
 
         const user = JSON.parse(storedUser);
         if (!user?.sid) {
-          console.error("Student ID missing in user data:", user);
           toast.error("Invalid student ID.");
           return;
         }
 
-        const response = await axios.get(`/api/student/${user.sid}/announcements/${id}`,{
-          headers:{
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-          }
-        });
+        const response = await axiosInstance.get(
+          `/api/student/${user.sid}/announcements/${id}`
+        );
+
         if (response.status === 200) {
           setAnnouncement(response.data);
         } else {
           toast.error("Error loading announcement!");
         }
       } catch (error) {
-        console.error("Error fetching announcement", error);
         toast.error("Failed to fetch announcement!");
       } finally {
         setLoading(false);
@@ -61,7 +57,6 @@ const AnnouncementDetail = () => {
   if (!announcement) {
     return <div>Error: Announcement not found!</div>;
   }
-  console.log(announcement)
   return (
     <div>
       <div className="content"><Toaster />

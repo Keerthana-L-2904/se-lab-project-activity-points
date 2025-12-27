@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import "./AdminDashboard.css";
 import { FaUserGraduate, FaUserTie } from "react-icons/fa";
 import { FiSettings } from "react-icons/fi";
-import axios from "axios"
+import axiosInstance from "../../utils/axiosConfig";
 import { toast, Toaster } from "react-hot-toast"; 
 
 const AdminDashboard = () => {
@@ -16,23 +16,16 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchData()
   }, [])
- const token=localStorage.getItem("token");
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/admin/dashboard-details",{
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      console.log(response.data)
+      const response = await axiosInstance.get("/api/admin/dashboard-details");
       if (response.status === 200) {
         setStats(response.data);
       } else {
         toast.error('Error loading dashboard details!');
       }
     } catch (error) {
-      console.error('Error fetching dashboard details', error);
       toast.error('Failed to fetch dashboard details!');
     }
   }

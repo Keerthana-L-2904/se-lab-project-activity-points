@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast"; 
+import axiosInstance from "../../utils/axiosConfig";
 
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const token=localStorage.getItem("token");
+  
   const [newAnnouncement, setNewAnnouncement] = useState({
   title: "",
   body: "",
@@ -18,34 +19,24 @@ const handleCreateAnnouncement = async () => {
   try {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
-      console.error("No user data in localStorage.");
+
       setError("User not found. Please log in.");
       return;
     }
 
     const user = JSON.parse(storedUser);
     if (!user?.faid) {
-      console.error("FA ID missing in user data:", user);
       setError("Invalid FA ID.");
       return;
     }
 
-    const response = await fetch("http://localhost:8080/api/fa/announcements", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        title: newAnnouncement.title,
-        body: newAnnouncement.body,
-        date: new Date().toISOString(),
-        time: new Date().toTimeString().split(' ')[0],
-        faid: parseInt(user.faid),
-      }),
-    });
-
-    if (!response.ok) throw new Error("Failed to create announcement");
+    const response = await axiosInstance.post("/api/fa/announcements", {
+    title: newAnnouncement.title,
+    body: newAnnouncement.body,
+    date: new Date().toISOString(),
+    time: new Date().toTimeString().split(" ")[0],
+    faid: Number(user.faid),
+  });
 
     toast.success("Announcement created!");
     setShowModal(false);
@@ -62,27 +53,19 @@ const handleCreateAnnouncement = async () => {
     try {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) {
-        console.error("No user data in localStorage.");
         setError("User not found. Please log in.");
         return;
       }
 
       const user = JSON.parse(storedUser);
       if (!user?.faid) {
-        console.error("FA ID missing in user data:", user);
         setError("Invalid FA ID.");
         return;
       }
 
-      const response = await fetch(`http://localhost:8080/api/fa/${user.faid}/announcements`,{
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch announcements.");
+     const response = await axiosInstance.get("/api/fa/announcements");
+      setAnnouncements(response.data);
 
-      const data = await response.json();
-      setAnnouncements(data);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../utils/axiosConfig";
 import "./uploadstatusmodal.css";
 import { toast, Toaster } from "react-hot-toast"; 
 
@@ -8,9 +8,7 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
-  const token=localStorage.getItem("token");
-
-
+  
   useEffect(() => {
     if (!isOpen) {
       setFile(null);
@@ -30,18 +28,16 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
     formData.append("file", chosenFile);
 
     try {
-      const res = await axios.post(
-        `http://localhost:8080/api/admin/check-attendance/${actid}`,
-        formData,{
-          headers:{
-          Authorization: `Bearer ${token}`
+      // ✅ FIXED: Explicitly set Content-Type to multipart/form-data
+      const res = await axiosInstance.post(
+        `/api/admin/check-attendance/${actid}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         }
-        }
-        // do NOT set Content-Type manually here — browser will add boundary
       );
-
-      // Debug: inspect what the server actually returned
-      console.log("check-attendance response:", res.data);
 
       // Normalize different possible response shapes
       const data = res.data || {};
@@ -56,8 +52,8 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
 
       const validRowsArray = Array.isArray(validRowsCandidate)
         ? validRowsCandidate
-        : Array.isArray(data.validRows)
-        ? data.validRows
+        : Array.isArray(data.validSids)
+        ? data.validSids
         : [];
 
       const skippedRowsArray = Array.isArray(skippedRowsCandidate)
@@ -88,9 +84,12 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
         validRows: validRowsArray,
         skippedDetails,
       });
+      
+      toast.success("✅ File checked successfully!");
+      
     } catch (err) {
-      console.error("Error checking file:", err);
-      toast.error("❌ Error checking file: " + (err.response?.data || err.message));
+      const errorMsg = err.response?.data?.message || err.response?.data || err.message;
+      toast.error(`❌ Error checking file: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
@@ -99,6 +98,24 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
   const handleFileChange = (e) => {
     const chosen = e.target.files && e.target.files[0];
     if (!chosen) return;
+    
+    // ✅ Validate file type
+    const validTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+      'application/vnd.ms-excel' // .xls
+    ];
+    
+    if (!validTypes.includes(chosen.type)) {
+      toast.error("❌ Please upload an Excel file (.xlsx or .xls)");
+      return;
+    }
+    
+    // ✅ Validate file size (5MB max)
+    if (chosen.size > 5 * 1024 * 1024) {
+      toast.error("❌ File size must be less than 5MB");
+      return;
+    }
+    
     setFile(chosen);
     // Automatically check after picking
     uploadAndCheck(chosen);
@@ -114,7 +131,7 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
 
   const handlePopulatePoints = async () => {
     if (!summary) {
-      alert("No checked data to populate. Please upload & check a file first.");
+      toast.error("No checked data to populate. Please upload & check a file first.");
       return;
     }
 
@@ -129,19 +146,21 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
 
     try {
       setLoading(true);
-      // backend expects List<Map<String,String>> in request body
-      const res = await axios.post(
+      // ✅ backend expects List<Map<String,String>> in request body
+      const response = await axiosInstance.post(
         `/api/admin/finalize-attendance/${actid}`,
-        rowsToSend,{headers:{
-          Authorization: `Bearer ${token}`
-        }}
+        rowsToSend,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
-      console.log("finalize-attendance response:", res.data);
       toast.success("✅ Points populated successfully!");
       onClose();
     } catch (err) {
-      console.error("Error finalizing attendance:", err);
-      toast.error("❌ Error populating points: " + (err.response?.data || err.message));
+      const errorMsg = err.response?.data?.message || err.response?.data || err.message;
+      toast.error(`❌ Error populating points: ${errorMsg}`);
     } finally {
       setLoading(false);
     }
@@ -151,14 +170,14 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
 
   return (
     <div className="usm-overlay" role="dialog" aria-modal="true">
-    <Toaster/>
+      <Toaster />
       <div className="usm-modal">
         <h2 className="usm-title">📂 Upload Attendance</h2>
 
         <input
           ref={inputRef}
           type="file"
-          accept=".csv"
+          accept=".xlsx,.xls"
           onChange={handleFileChange}
           className="usm-hidden-input"
         />
@@ -184,7 +203,7 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
                     <span className="usm-badge usm-badge-selected">Selected</span>
                   </div>
                 ) : (
-                  <div className="usm-no-file">No file chosen — choose a CSV to check</div>
+                  <div className="usm-no-file">No file chosen — choose an Excel file to check</div>
                 )}
               </div>
             </div>
@@ -209,7 +228,9 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
             <div className="usm-tips">
               <strong>Tips:</strong>
               <ul>
-                <li>CSV should have one student SID per line (header optional).</li>
+                <li>File size must be at most 5MB</li>
+                <li>It must have only one column heading <b>Student ID</b></li>
+                <li>File name must have the name <b>enrollment_list.xlsx</b></li>
                 <li>After you choose a file it will be checked automatically.</li>
                 <li>If you need to change file, click <em>Choose file</em> again.</li>
               </ul>

@@ -28,6 +28,15 @@ public class StudentService {
     @Autowired
     private AnnouncementsRepository announcementsRepository;
 
+    private String escapeLike(String input) {
+    if (input == null) return "";
+    // Escape backslash first, then % and _
+    return input
+        .replace("\\", "\\\\")
+        .replace("%", "\\%")
+        .replace("_", "\\_");
+}
+
     // Get student by ID
     public Optional<Student> getStudentById(String studentID) {
         return studentRepository.findBySid(studentID);
@@ -72,8 +81,28 @@ public class StudentService {
     }
 
     public List<StudentWithMandatoryDTO> searchStudentsByFAIDAndName(int FAID, String name) {
-        return studentRepository.searchStudentsByFAIDAndName(FAID, name);
+    // 1️⃣ Handle null or empty input safely
+    if (name == null || name.trim().isEmpty()) {
+        name = ""; // safe default, won't return everything unexpectedly
     }
+
+    // 2️⃣ Optional: validate length
+    if (name.length() > 50) {
+        throw new IllegalArgumentException("Name too long");
+    }
+
+    // 3️⃣ Optional: allow only letters and spaces
+    if (!name.matches("[a-zA-Z ]*")) {
+        throw new IllegalArgumentException("Invalid characters in name");
+    }
+
+    // 4️⃣ Escape wildcards
+    String safeName = escapeLike(name);
+
+    // 5️⃣ Call repository
+    return studentRepository.searchStudentsByFAIDAndName(FAID, safeName);
+}
+
     
     public List<StudentWithMandatoryDTO> searchStudentsByMandatoryCount(int FAID, Long mandatoryCount) {
         return studentRepository.searchStudentsByFAIDAndMandatoryCount(FAID, mandatoryCount);

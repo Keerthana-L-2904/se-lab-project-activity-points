@@ -107,11 +107,6 @@ button:hover {
   padding: 6px;
 }
 
-.table-container {
-  margin-top: 20px;
-  overflow-x: auto;
-}
-
 table {
   width:100%;
   margin-top:15px;
@@ -130,13 +125,6 @@ table td {
 table th {
   background-color: #f4f4f4;
 }
-
-table th:nth-child(6), 
-table td:nth-child(6) {
-  width: 5%;  
-  white-space: nowrap;
-}
-
 .pagination {
   display: flex;
   gap: 5px;
@@ -182,4 +170,11 @@ table td:nth-child(6) {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 4px;
+}
+
+.actions-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
 }
