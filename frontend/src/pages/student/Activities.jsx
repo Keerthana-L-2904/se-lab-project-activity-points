@@ -16,7 +16,7 @@ const Activities = () => {
       useEffect(() => {
         const fetchActivities = async () => {
           try {
-            const response = await axiosInstance.get("/api/activities");
+            const response = await axiosInstance.get("/activities");
             setActivities(response.data);
           } catch (error) {
             const message =

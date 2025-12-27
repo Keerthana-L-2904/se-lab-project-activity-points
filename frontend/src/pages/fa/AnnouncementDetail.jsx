@@ -34,7 +34,7 @@ const AnnouncementDetail = () => {
         }
 
         const response = await axiosInstance.get(
-        `/api/fa/${user.faid}/announcements/${id}`
+        `/fa/${user.faid}/announcements/${id}`
       );
 
         if (response.status === 200) {

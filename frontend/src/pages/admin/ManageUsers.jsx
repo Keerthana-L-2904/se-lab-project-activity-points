@@ -43,7 +43,7 @@ const uploadStudents = async () => {
 
   try {
     const response = await axiosInstance.post(
-      "/api/admin/manage-users/upload-students",
+      "/admin/manage-users/upload-students",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
@@ -88,7 +88,7 @@ const uploadFas = async () => {
 
   try {
     const response = await axiosInstance.post(
-      "/api/admin/manage-users/upload-fas",
+      "/admin/manage-users/upload-fas",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
@@ -124,7 +124,7 @@ const uploadFas = async () => {
   // Fetch data
   const fetchStudents = async () => {
     try {
-      const res = await axiosInstance.get("/api/admin/manage-users/student");
+      const res = await axiosInstance.get("/admin/manage-users/student");
 
       setStudents(res.data);
       setView("students");
@@ -135,7 +135,7 @@ const uploadFas = async () => {
   };
   const fetchFas = async () => {
     try {
-      const res = await axiosInstance.get("/api/admin/manage-users/fa");
+      const res = await axiosInstance.get("/admin/manage-users/fa");
 
       setFas(res.data);
       setView("fas");
@@ -150,7 +150,7 @@ const uploadFas = async () => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
     try {
       await axiosInstance.delete(
-      `/api/admin/manage-users/student/${sid}`
+      `/admin/manage-users/student/${sid}`
     );
 
       setStudents(students.filter((s) => s.sid !== sid));
@@ -178,7 +178,7 @@ const uploadFas = async () => {
   
       try {
         const response = await axiosInstance.post(
-        "/api/admin/manage-users/students/bulk-delete",
+        "/admin/manage-users/students/bulk-delete",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -219,7 +219,7 @@ const uploadFas = async () => {
   const updateStudent = async () => {
     try {
         const res = await axiosInstance.put(
-        `/api/admin/manage-users/student/${editStudent.sid}`,
+        `/admin/manage-users/student/${editStudent.sid}`,
         editStudent
       );
 

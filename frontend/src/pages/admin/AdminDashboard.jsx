@@ -19,7 +19,7 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axiosInstance.get("/api/admin/dashboard-details");
+      const response = await axiosInstance.get("/admin/dashboard-details");
       if (response.status === 200) {
         setStats(response.data);
       } else {

@@ -19,12 +19,12 @@ const StudentDashboard = () => {
             const user = JSON.parse(storedUser);
 
             // ✅ Fetch student data
-            const studentResponse = await axiosInstance.get("/api/student");
+            const studentResponse = await axiosInstance.get("/student");
             setStudent(studentResponse.data);
 
             // ✅ FIXED: Fetch latest activity using axios (not fetch)
             try {
-                const activityResponse = await axiosInstance.get("/api/student/latest-activity");
+                const activityResponse = await axiosInstance.get("/student/latest-activity");
                 
                 if (activityResponse.data) {
                     setLatestActivity(activityResponse.data);
@@ -38,7 +38,7 @@ const StudentDashboard = () => {
 
             // ✅ FIXED: Fetch announcements using axios (not fetch)
             try {
-                const announcementResponse = await axiosInstance.get("/api/student/announcements");
+                const announcementResponse = await axiosInstance.get("/student/announcements");
                 
                 if (announcementResponse.data && Array.isArray(announcementResponse.data)) {
                     setAnnouncements(announcementResponse.data.slice(-2));

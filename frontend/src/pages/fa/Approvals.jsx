@@ -33,7 +33,7 @@ const Approvals = () => {
       if (!email) return;
       try {
         const response = await axiosInstance.get(
-        `/api/fa/details`,
+        `/fa/details`,
         { params: { email } }
       );
         if (response.status === 200) {
@@ -62,7 +62,7 @@ const Approvals = () => {
   
     try {
       const response = await axiosInstance.get(
-      "/api/fa/get-Fa",
+      "/fa/get-Fa",
       { params: { sid } }
     );
       if (response.status === 200) {
@@ -94,7 +94,7 @@ const Approvals = () => {
       }
     
       const response = await axiosInstance.post(
-        `/api/fa/approve-request/${rid}`,
+        `/fa/approve-request/${rid}`,
         {},
         { params: { email: user.email, points: enteredPoints } }
       );
@@ -116,7 +116,7 @@ const Approvals = () => {
     try {
       
   
-      const resp = await axiosInstance.get(`http://localhost:8080/api/fa/requests/${reqid}/proof`, {
+      const resp = await axiosInstance.get(`/fa/requests/${reqid}/proof`, {
         responseType: "blob",
       });
 
@@ -138,7 +138,7 @@ const Approvals = () => {
   const handleReject = async (rid, index,comment) => {
     try {
       const response = await axiosInstance.post(
-      `/api/fa/reject-request/${rid}`,
+      `/fa/reject-request/${rid}`,
       { comment: comment || "No comments" }
     );
 

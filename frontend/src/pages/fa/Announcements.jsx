@@ -30,7 +30,7 @@ const handleCreateAnnouncement = async () => {
       return;
     }
 
-    const response = await axiosInstance.post("/api/fa/announcements", {
+    const response = await axiosInstance.post("/fa/announcements", {
     title: newAnnouncement.title,
     body: newAnnouncement.body,
     date: new Date().toISOString(),
@@ -63,7 +63,7 @@ const handleCreateAnnouncement = async () => {
         return;
       }
 
-     const response = await axiosInstance.get("/api/fa/announcements");
+     const response = await axiosInstance.get("/fa/announcements");
       setAnnouncements(response.data);
 
     } catch (err) {

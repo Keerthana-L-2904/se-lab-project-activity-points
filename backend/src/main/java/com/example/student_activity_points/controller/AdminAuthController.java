@@ -14,9 +14,13 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @CrossOrigin
 public class AdminAuthController {
 
@@ -63,6 +67,9 @@ public class AdminAuthController {
     
     @Autowired
     private CaptchaService captchaService;
+
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
 
     private static final Logger log = LoggerFactory.getLogger(AdminAuthController.class);
     private final Map<String, LocalDateTime> recentResetRequests = new ConcurrentHashMap<>();
@@ -548,7 +555,9 @@ public ResponseEntity<?> refreshToken(HttpServletRequest httpRequest, HttpServle
                     final String tokenToSend = token;
                     CompletableFuture.runAsync(() -> {
                         try {
-                            String resetLink = "http://localhost:5173/reset-password?token=" + tokenToSend;
+                            
+                            String resetLink = frontendBaseUrl + "/reset-password?token=" +
+        URLEncoder.encode(tokenToSend, StandardCharsets.UTF_8);
                             emailService.sendEmail(adminEmail, "Password Reset Request",
                                     "You requested a password reset. Click here to reset your password: " + 
                                     resetLink + "\n\nThis link expires in 30 minutes.\n\n" +

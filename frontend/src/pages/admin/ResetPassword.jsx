@@ -29,7 +29,7 @@ const ResetPassword = () => {
     setLoading(true);
     try {
       const res = await axiosInstance.post(
-        "http://localhost:8080/admin/reset-password",
+        "/admin/reset-password",
         { token, newPassword }
       );
       toast.success(res.data);

@@ -83,11 +83,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/logout").permitAll()   // ✅ Allow logout for Student/FA
                 .requestMatchers("/api/auth/**").permitAll()
                 // ✅ Admin endpoints
-                .requestMatchers("/admin/login").permitAll()
-                .requestMatchers("/admin/forgot-password").permitAll()
-                .requestMatchers("/admin/reset-password").permitAll()
-                .requestMatchers("/admin/refresh").permitAll()
-                .requestMatchers("/admin/logout").permitAll()
+                .requestMatchers("/api/admin/login").permitAll()
+                .requestMatchers("/api/admin/forgot-password").permitAll()
+                .requestMatchers("/api/admin/reset-password").permitAll()
+                .requestMatchers("/api/admin/refresh").permitAll()
+                .requestMatchers("/api/admin/logout").permitAll()
                 
                 .requestMatchers("/error").permitAll()
                 

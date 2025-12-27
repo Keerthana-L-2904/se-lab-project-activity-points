@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/requests")
+@RequestMapping("/api/requests")
 @CrossOrigin(origins = "http://localhost:5173")
 public class RequestsController {
 

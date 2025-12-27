@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
   const loginstudent = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const response = await axiosInstance.post('/api/auth/login-student', {
+        const response = await axiosInstance.post('/auth/login-student', {
           accessToken: tokenResponse.access_token, 
         });
 
@@ -65,7 +65,7 @@ const AuthProvider = ({ children }) => {
   const loginfa = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const response = await axiosInstance.post('/api/auth/login-fa', {
+        const response = await axiosInstance.post('/auth/login-fa', {
           accessToken: tokenResponse.access_token,
         });
         if (response.status === 200) {
@@ -105,7 +105,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axiosInstance.post('/api/auth/logout');
+      await axiosInstance.post('/auth/logout');
       
       localStorage.clear();
       setCSRFToken(null);

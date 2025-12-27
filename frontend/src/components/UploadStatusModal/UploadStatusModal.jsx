@@ -30,7 +30,7 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
     try {
       // ✅ FIXED: Explicitly set Content-Type to multipart/form-data
       const res = await axiosInstance.post(
-        `/api/admin/check-attendance/${actid}`,
+        `/admin/check-attendance/${actid}`,
         formData,
         {
           headers: {

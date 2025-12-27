@@ -26,12 +26,12 @@ const NavBar = () => {
 
           if (userData.role === "student") {
             setRole("student");
-            const res = await axiosInstance.get("/api/student");
+            const res = await axiosInstance.get("/student");
             setUser(res.data);
             
             } else if (userData.role === "fa") {
               setRole("fa");
-              const res = await axiosInstance.get("/api/fa");
+              const res = await axiosInstance.get("/fa");
               setUser(res.data);
             }
 

@@ -32,10 +32,10 @@ public class CsrfFilter extends OncePerRequestFilter {
     private static final String[] EXCLUDED_PATHS = {
         "/api/auth/login-student",
         "/api/auth/login-fa",
-        "/admin/login",
-        "/admin/register",
-        "/admin/forgot-password",
-        "/admin/reset-password",
+        "/api/admin/login",
+        "/api/admin/register",
+        "/api/admin/forgot-password",
+        "/api/admin/reset-password",
         "/api/auth/refresh" // Refresh token endpoint
     };
     

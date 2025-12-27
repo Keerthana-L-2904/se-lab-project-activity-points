@@ -47,7 +47,7 @@ useEffect(() => {
         return;
     }
     try {
-        const response = await axiosInstance.get("/api/fa/details", {
+        const response = await axiosInstance.get("/fa/details", {
             params: { email }
             });
 
@@ -69,7 +69,7 @@ useEffect(() => {
         useEffect(() => {
         const loadDashboard = async () => {
             try {
-            const { data } = await axiosInstance.get("/api/fa/dashboard");
+            const { data } = await axiosInstance.get("/fa/dashboard");
             setFaData(data);
 
             const dids = [...new Set(
@@ -81,7 +81,7 @@ useEffect(() => {
             const results = await Promise.all(
                 dids.map(async (did) => {
                 try {
-                    const res = await axiosInstance.get(`/api/fa/departments/${did}`);
+                    const res = await axiosInstance.get(`/fa/departments/${did}`);
                     return { did, depName: res.data.name || "Unknown" };
                 } catch {
                     return { did, depName: "Unknown" };
@@ -109,7 +109,7 @@ useEffect(() => {
 
             const fetchStudents = async () => {
                 try {
-                const { data } = await axiosInstance.get("/api/fa/student-list");
+                const { data } = await axiosInstance.get("/fa/student-list");
 
                 setStudentCount(data.length);   // total students
                 setStudents(data.slice(-2));    // last 2 students
@@ -158,7 +158,7 @@ useEffect(() => {
             </div>
             <div className="activity-header">
                 <h2 className="activity-title">Student List</h2>
-                <Link to="/fa/student-list" className="all-btn">See All</Link>
+                <Link to="/student-list" className="all-btn">See All</Link>
             </div>
 
             <table className="activity-table">

@@ -29,7 +29,7 @@ const RequestForm = () => {
     const fetchActivityData = async () => {
       try {
         const response = await axiosInstance.get(
-          "/api/student/manage-activities"
+          "/student/manage-activities"
         );
 
         if (response.status === 200) {

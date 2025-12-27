@@ -11,7 +11,7 @@ export const AdminAuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const log = useCallback((message) => {
-    console.log(`[AdminAuthProvider] ${message}`);
+    //console.log(`[AdminAuthProvider] ${message}`);
   }, []);
 
   // ✅ Restore session on page refresh

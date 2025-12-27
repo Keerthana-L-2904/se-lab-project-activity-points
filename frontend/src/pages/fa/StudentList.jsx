@@ -42,7 +42,7 @@ export default function StudentList() {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        "/api/fa/student-list/sort-by-asc"
+        "/fa/student-list/sort-by-asc"
       );
       setStudents(response.data || []);
       setCurrentPage(1);
@@ -64,7 +64,7 @@ export default function StudentList() {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        "/api/fa/student-list/search",
+        "/fa/student-list/search",
         { params: { name: searchName } }
       );
       
@@ -89,7 +89,7 @@ export default function StudentList() {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        "/api/fa/student-list/search-by-mandatory",
+        "/fa/student-list/search-by-mandatory",
         { params: { mandatoryCount } }
       );
       
@@ -110,7 +110,7 @@ export default function StudentList() {
       setLoading(true);
       const endpoint = order === "asc" ? "sort-by-asc" : "sort-by-desc";
       const response = await axiosInstance.get(
-        `/api/fa/student-list/${endpoint}`
+        `/fa/student-list/${endpoint}`
       );
       
       setStudents(response.data || []);
@@ -133,7 +133,7 @@ export default function StudentList() {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/api/fa/student-list/filter-${type}-points-${condition}`,
+        `/fa/student-list/filter-${type}-points-${condition}`,
         { params: { points: value } }
       );
       

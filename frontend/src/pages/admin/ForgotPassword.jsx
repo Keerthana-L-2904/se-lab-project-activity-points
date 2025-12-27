@@ -17,7 +17,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const res = await axiosInstance.post(
-        "http://localhost:8080/admin/forgot-password",
+        "/admin/forgot-password",
         null,
         { params: { email } }
       );

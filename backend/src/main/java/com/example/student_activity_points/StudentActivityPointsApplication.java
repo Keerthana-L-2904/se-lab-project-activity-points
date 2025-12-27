@@ -9,8 +9,9 @@ public class StudentActivityPointsApplication {
 
     public static void main(String[] args) {
         // Load .env file
-        Dotenv dotenv = Dotenv.load();
-
+        Dotenv dotenv = Dotenv.configure()
+        .ignoreIfMissing() 
+        .load();
         // Example: print or use variables
         System.setProperty("MYAPP_SECRET_KEY", dotenv.get("MYAPP_SECRET_KEY"));
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));

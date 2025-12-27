@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 
@@ -58,18 +58,22 @@ export const getCSRFToken = () => {
 
 // ✅ Helper function to determine correct refresh endpoint
 const getRefreshEndpoint = () => {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
   try {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
       if (user?.role === 'admin') {
-        return 'http://localhost:8080/admin/refresh';
+        return `${API_BASE}/admin/refresh`;
+
       }
     }
   } catch (e) {
     console.error('Axios Error parsing user from localStorage:', e);
   }
-  return 'http://localhost:8080/api/auth/refresh';
+
+  return `${API_BASE}/auth/refresh`;
+
 };
 
 // ✅ NEW: Check if endpoint should skip token refresh

@@ -19,7 +19,7 @@ const StudentDetails = () => {
     try {
       // ✅ FIXED: Removed token check (axios handles auth automatically)
       const resp = await axiosInstance.get(
-        `/api/fa/requests/${sid}/${actId}/proof`,
+        `/fa/requests/${sid}/${actId}/proof`,
         { responseType: "blob" }
       );
 
@@ -43,7 +43,7 @@ const StudentDetails = () => {
       try {
         // ✅ FIXED: Use axios instead of fetch
         const response = await axiosInstance.get(
-          `/api/fa/student-details/${sid}`
+          `/fa/student-details/${sid}`
         );
         // ✅ FIXED: Access response.data directly (no .json() needed)
         const data = response.data;

@@ -50,7 +50,7 @@ const ActivityManagement = () => {
       const params = {};
       if (mandatoryFilter) params.mandatory = mandatoryFilter;
       const response = await axiosInstance.get(
-        "/api/admin/manage-activities",
+        "/admin/manage-activities",
         { params }
       );
 
@@ -81,7 +81,7 @@ const ActivityManagement = () => {
 
   const getDeptData = async () => {
     try {
-      const response = await axiosInstance.get("/api/admin/get-departments");
+      const response = await axiosInstance.get("/admin/get-departments");
 
       if (response.status === 200) {
         setDepartments(response.data);
@@ -120,7 +120,7 @@ const ActivityManagement = () => {
 
   const handleAddActivity = async () => {
     try {
-      const response = await axiosInstance.post("/api/admin/manage-activities", newActivity);
+      const response = await axiosInstance.post("/admin/manage-activities", newActivity);
 
       if (response.status === 200) {
         toast.success("Activity added successfully!");
@@ -147,7 +147,7 @@ const ActivityManagement = () => {
   const handleUpdate = async () => {
     try {
       const response = await axiosInstance.put(
-        `/api/admin/manage-activities/${editActivity.actID}`,
+        `/admin/manage-activities/${editActivity.actID}`,
         editActivity
       );
 
@@ -166,7 +166,7 @@ const ActivityManagement = () => {
   const handleDelete = async (id) => {
     try {
           const response = await axiosInstance.delete(
-          `/api/admin/manage-activities/${id}`
+          `/admin/manage-activities/${id}`
         );
 
       if (response.status === 200) {
@@ -201,7 +201,7 @@ const ActivityManagement = () => {
   
     try {
       const response = await axiosInstance.post(
-      "/api/admin/bulk-upload-activities",
+      "/admin/bulk-upload-activities",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
@@ -242,7 +242,7 @@ const ActivityManagement = () => {
   
     try {
       const response = await axiosInstance.post(
-      "/api/admin/bulk-delete-activities",
+      "/admin/bulk-delete-activities",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
