@@ -467,6 +467,11 @@ const ActivityManagement = () => {
           actid={uploadstatus.actid}
           isOpen={uploadstatus.isOpen}
           onClose={uploadstatus.onClose}
+          onSuccess={() => {
+            // Refresh your data here
+            fetchData();
+            getDeptData(); // or whatever function fetches your activity list
+          }}
         />
       )}
     

@@ -29,7 +29,7 @@ services:
       - mysql
 
   frontend:
-    build: ./frontend      # <- Use your Dockerfile in frontend folder
+    build: ./frontend      
     container_name: student_activity_points-frontend
     ports:
       - "5173:80"

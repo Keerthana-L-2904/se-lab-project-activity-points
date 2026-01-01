@@ -78,39 +78,60 @@ const Approvals = () => {
   
 
   // Approve Request
-  const handleApprove = async (rid, index,sid) => {
-    if (loading[rid]) return; // already processing
+const handleApprove = async (rid, index, sid) => {
+  if (loading[rid]) return;
 
-    setLoading(prev => ({ ...prev, [rid]: true })); // disable immediately
-    let enteredPoints = points[rid];
+  setLoading(prev => ({ ...prev, [rid]: true }));
 
-    try {
-      if (studentFAIds[sid]=== user.faid && (!enteredPoints  || enteredPoints <= 0)) {
-        enteredPoints=5;
-        throw new Error("Points cannot be negative");
-      }
-      if (studentFAIds[sid]!== user.faid) {
-        enteredPoints=5;
-      }
-    
-      const response = await axiosInstance.post(
-        `/fa/approve-request/${rid}`,
-        {},
-        { params: { email: user.email, points: enteredPoints } }
-      );
+  let enteredPoints = Number(points[rid]);
 
-
-      if (response.status === 200) {
-        await fetchfaData(user.email);
-        toast.success("Approval successful");
-      }
-    } catch (error) {
-      toast.error(error.message || error.response?.data || "Approval failed!");
-    }finally {
-      setLoading(prev => ({ ...prev, [rid]: false })); // re-enable if failed
+  // FRONTEND validation — no throwing
+  if (studentFAIds[sid] === user.faid) {
+    if (!enteredPoints || enteredPoints <= 0) {
+      toast.error("Points must be greater than 0");
+      setLoading(prev => ({ ...prev, [rid]: false }));
+      return;
     }
-    
-  };
+  } else {
+    enteredPoints = 5; // default for non-FA students
+  }
+
+  try {
+    await axiosInstance.post(
+      `/fa/approve-request/${rid}`,
+      null,
+      {
+        params: {
+          email: user.email,
+          points: enteredPoints
+        }
+      }
+    );
+
+    toast.success("Approval successful");
+    await fetchfaData(user.email);
+
+  } catch (error) {
+    if (error.response) {
+      // ✅ THIS is the important part
+      const msg =
+        typeof error.response.data === "string"
+          ? error.response.data
+          : error.response.data?.message;
+
+      if (error.response.status === 409) {
+        toast.error(msg || "Activity already approved for this student");
+      } else {
+        toast.error(msg || "Approval failed");
+      }
+    } else {
+      toast.error("Server error");
+    }
+  } finally {
+    setLoading(prev => ({ ...prev, [rid]: false }));
+  }
+};
+
 
   const openProof = async (reqid) => {
     try {

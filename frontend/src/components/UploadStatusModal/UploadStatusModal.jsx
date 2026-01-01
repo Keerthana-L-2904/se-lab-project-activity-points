@@ -28,7 +28,6 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
     formData.append("file", chosenFile);
 
     try {
-      // ✅ FIXED: Explicitly set Content-Type to multipart/form-data
       const res = await axiosInstance.post(
         `/admin/check-attendance/${actid}`,
         formData,
@@ -39,16 +38,11 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
         }
       );
 
-      // Normalize different possible response shapes
       const data = res.data || {};
-      const totalRows =
-        data.totalRows ?? data.total_rows ?? data.total ?? 0;
+      const totalRows = data.totalRows ?? data.total_rows ?? data.total ?? 0;
 
-      // backend may return an array of valid rows (validRows) OR only successCount
-      const validRowsCandidate =
-        data.validRows ?? data.valid_rows ?? data.valid ?? null;
-      const skippedRowsCandidate =
-        data.skippedRows ?? data.skipped_rows ?? data.skipped ?? null;
+      const validRowsCandidate = data.validRows ?? data.valid_rows ?? data.valid ?? null;
+      const skippedRowsCandidate = data.skippedRows ?? data.skipped_rows ?? data.skipped ?? null;
 
       const validRowsArray = Array.isArray(validRowsCandidate)
         ? validRowsCandidate
@@ -62,30 +56,37 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
         ? data.skippedRows
         : [];
 
-      const successCount =
-        Array.isArray(validRowsCandidate)
-          ? validRowsCandidate.length
-          : data.successCount ?? data.success_count ?? validRowsArray.length ?? 0;
+      const successCount = Array.isArray(validRowsCandidate)
+        ? validRowsCandidate.length
+        : data.successCount ?? data.success_count ?? validRowsArray.length ?? 0;
 
-      const skippedCount =
-        Array.isArray(skippedRowsCandidate)
-          ? skippedRowsCandidate.length
-          : data.skippedCount ?? data.skipped_count ?? skippedRowsArray.length ?? 0;
+      const skippedCount = Array.isArray(skippedRowsCandidate)
+        ? skippedRowsCandidate.length
+        : data.skippedCount ?? data.skipped_count ?? skippedRowsArray.length ?? 0;
 
-      const skippedDetails =
-        skippedRowsArray.length > 0
-          ? skippedRowsArray
-          : data.skippedDetails ?? data.skipped_details ?? [];
+      const skippedDetails = skippedRowsArray.length > 0
+        ? skippedRowsArray
+        : data.skippedDetails ?? data.skipped_details ?? [];
+
+      // ✅ Count already enrolled students from skipped details
+      const alreadyEnrolledCount = skippedDetails.filter(msg => 
+        msg.includes("Already enrolled") || msg.includes("already enrolled")
+      ).length;
 
       setSummary({
         totalRows,
         successCount,
         skippedCount,
+        alreadyEnrolledCount,
         validRows: validRowsArray,
         skippedDetails,
       });
       
-      toast.success("✅ File checked successfully!");
+      // ✅ Show already enrolled count in success toast
+      const successMessage = `✅ File checked! ${successCount} valid,${skippedCount} skipped, ${alreadyEnrolledCount} already enrolled`
+        
+      
+      toast.success(successMessage);
       
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.response?.data || err.message;
@@ -99,10 +100,9 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
     const chosen = e.target.files && e.target.files[0];
     if (!chosen) return;
     
-    // ✅ Validate file type
     const validTypes = [
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.ms-excel' // .xls
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
     ];
     
     if (!validTypes.includes(chosen.type)) {
@@ -110,14 +110,12 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
       return;
     }
     
-    // ✅ Validate file size (5MB max)
     if (chosen.size > 5 * 1024 * 1024) {
       toast.error("❌ File size must be less than 5MB");
       return;
     }
     
     setFile(chosen);
-    // Automatically check after picking
     uploadAndCheck(chosen);
   };
 
@@ -135,7 +133,6 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
       return;
     }
 
-    // If backend returned validRows (array), send it. If not, warn user.
     const rowsToSend = summary.validRows ?? [];
     if (!Array.isArray(rowsToSend) || rowsToSend.length === 0) {
       const proceed = window.confirm(
@@ -146,9 +143,8 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
 
     try {
       setLoading(true);
-      // ✅ backend expects List<Map<String,String>> in request body
       const response = await axiosInstance.post(
-        `/api/admin/finalize-attendance/${actid}`,
+        `/admin/finalize-attendance/${actid}`,
         rowsToSend,
         {
           headers: {
@@ -253,6 +249,12 @@ const UploadStatusModal = ({ actid, isOpen, onClose }) => {
                 <div className="usm-stat-label">Skipped</div>
                 <div className="usm-stat-value">{summary.skippedCount}</div>
               </div>
+              {summary.alreadyEnrolledCount > 0 && (
+                <div className="usm-stat">
+                  <div className="usm-stat-label">Already Enrolled</div>
+                  <div className="usm-stat-value">{summary.alreadyEnrolledCount}</div>
+                </div>
+              )}
             </div>
 
             {summary.skippedDetails?.length > 0 && (
