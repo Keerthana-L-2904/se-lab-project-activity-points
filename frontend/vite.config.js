@@ -6,9 +6,6 @@ export default defineConfig({
   server: {
     port: 5173,
     allowedHosts: ["myapp.local"],
-    proxy: {
-      '/api': 'http://localhost:8080', // Proxy API calls to Spring Boot
-    },
     //allowedHosts: ["myapp.local","localtest.me"]
  
   },
