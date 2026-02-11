@@ -15,7 +15,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(Arrays.asList("*")); // Use patterns for flexibility
+        config.setAllowedOriginPatterns(Arrays.asList("https://*.nitc.ac.in", "http://localhost:*","http://127.0.0.1:*")); // Use patterns for flexibility
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setExposedHeaders(Arrays.asList("Authorization")); // If token is in headers
