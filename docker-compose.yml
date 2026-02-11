@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: chrisscharls123/activity-points-frontend:v1
+    image: chrisscharls123/activity-points-frontend:v2
     container_name: frontend
     restart: always
 
@@ -19,7 +19,7 @@ services:
       - app-network
 
   backend:
-    image: chrisscharls123/activity-points-backend:v1
+    image: chrisscharls123/activity-points-backend:v2
     container_name: backend
     restart: on-failure
     ports:
