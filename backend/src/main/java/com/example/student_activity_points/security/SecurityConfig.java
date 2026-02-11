@@ -44,7 +44,7 @@ public class SecurityConfig {
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
         "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; " +
         "img-src 'self' data: https://lh3.googleusercontent.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
-        "connect-src 'self' http://localhost:8080 http://localtest.me:8080 http://127.0.0.1:8080 http://localhost:5173 http://localtest.me:5173 http://127.0.0.1:5173 https://accounts.google.com https://oauth2.googleapis.com; " +
+        "connect-src 'self' https://actpts-backend.nitc.ac.in https://actpts.nitc.ac.in http://localhost:8080 http://localtest.me:8080 http://127.0.0.1:8080 http://localhost:5173 http://localtest.me:5173 http://127.0.0.1:5173 https://accounts.google.com https://oauth2.googleapis.com; " +
         "frame-ancestors 'none'; " +
         "object-src 'none'; " +
         "base-uri 'self'; " +
@@ -140,7 +140,9 @@ public class SecurityConfig {
                 "http://localhost:4173",
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "http://localtest.me:5173"
+                "http://localtest.me:5173",
+                "https://actpts.nitc.ac.in",
+                "https://www.actpts.nitc.ac.in"      
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of(
