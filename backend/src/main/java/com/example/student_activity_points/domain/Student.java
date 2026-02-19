@@ -39,7 +39,7 @@ public class Student {
     @Column(name = "institute_points", columnDefinition = "INT DEFAULT 0")
     private int institutePoints;
     
-    @Column(name = "activity_points", columnDefinition = "INT DEFAULT 0", insertable = false, updatable = false)
+    @Column(name = "activity_points", columnDefinition = "INT DEFAULT 0")
     private Integer activityPoints;
 
     @Column(name = "other_points", columnDefinition = "INT DEFAULT 0") // ✅ new field
