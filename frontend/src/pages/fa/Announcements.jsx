@@ -137,7 +137,7 @@ const handleCreateAnnouncement = async () => {
   }}>
     <div style={{
       backgroundColor: "white",
-      padding: "20px",
+      padding: "50px",
       borderRadius: "10px",
       width: "90%",
       maxWidth: "500px"
