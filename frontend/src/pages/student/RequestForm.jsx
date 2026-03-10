@@ -358,6 +358,9 @@ const RequestForm = () => {
             value={formData.points}
             onChange={handleChange}
             disabled={!formData.isCustomActivity}
+            min="0"  // Example minimum value
+            max="20"  // Example maximum value (adjust as needed)
+            required
           />
 
           {/* LOCATION */}
