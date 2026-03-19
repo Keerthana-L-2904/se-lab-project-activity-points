@@ -1,5 +1,6 @@
 import express from "express"
 import fs from "fs"
+import path from "path"
 
 const app = express()
 const PORT = 3000
@@ -15,4 +16,10 @@ if (fs.existsSync(envJsPath)) {
 }
 
 app.use(express.static("dist"))
+
+// 🔥 SPA fallback
+app.use((req, res) => {
+  res.sendFile(path.resolve("dist/index.html"))
+})
+
 app.listen(PORT, () => console.log("Frontend running"))

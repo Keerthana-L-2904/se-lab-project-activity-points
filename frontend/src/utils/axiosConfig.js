@@ -81,10 +81,10 @@ const shouldSkipTokenRefresh = (url) => {
   if (!url) return false;
   
   const skipEndpoints = [
-    '/api/auth/login-student',
-    '/api/auth/login-fa',
-    '/api/auth/refresh',
-    '/api/auth/logout',
+    '/auth/login-student',
+    '/auth/login-fa',
+    '/auth/refresh',
+    '/auth/logout',
     '/admin/login',
     '/admin/refresh'
   ];

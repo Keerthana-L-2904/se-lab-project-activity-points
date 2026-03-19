@@ -14,7 +14,9 @@ const SideBar = ({role}) => {
   const toggleSidebar = () => setIsOpen(!isOpen);
   const handlelogout=()=>{
     logout() }
-    const guidelinesUrl = "https://docs.google.com/document/d/1Vg-vn_eAtPbE8F2HA7U_SdyPOo4NVsx-Xwxg8xBHLCs/edit?usp=sharing";
+    const adminguidelinesUrl = "https://docs.google.com/document/d/1Vg-vn_eAtPbE8F2HA7U_SdyPOo4NVsx-Xwxg8xBHLCs/edit?tab=t.0";
+    const faguidelinesUrl="https://docs.google.com/document/d/1m1wt0K5PEmpURZKslvvljmU8GeTx5Lmhv3PGp3nu1wE/edit?tab=t.0"
+    const studentguidelinesUrl="https://docs.google.com/document/d/12VOTwQTsF1BzyUE_ylicpzNn9YXoARRIUOhXodD7B1c/edit?tab=t.0"
 
     const links=[
       {view:"admin",links:[
@@ -22,7 +24,7 @@ const SideBar = ({role}) => {
           {name:"Dashboard",url:"/admin/dashboard",image:assets.dashboard},
           {name:"Manage Users",url:"/admin/users",image:assets.users},
           {name:"Manage Activities",url:"/admin/activities",image:assets.activities},
-          {name:"Guidelines",url:guidelinesUrl,external:true,image:assets.guidelines},
+          {name:"Guidelines",url:adminguidelinesUrl,external:true,image:assets.guidelines},
       ]},
       {view:"student",links:[
           {name:"Dashboard",url:"/student/dashboard",image:assets.dashboard},
@@ -30,13 +32,13 @@ const SideBar = ({role}) => {
           {name:"Activity History",url:"/student/activity-history",image:<i className="bi bi-hourglass-bottom"></i>},
           {name:"Activities",url:"/student/activities",image:<i className="bi bi-hourglass-bottom"></i>},
           {name:"Request Form",url:"/student/request-form",image:<i className="bi bi-file-earmark-text"></i>},
-          {name:"Guidelines",url:guidelinesUrl,external:true,image:assets.guidelines},
+          {name:"Guidelines",url:studentguidelinesUrl,external:true,image:assets.guidelines},
       ]},
       {view:"fa",links:[
           {name:"Dashboard",url:"/fa/dashboard",image:assets.dashboard},
           {name:"Approval",url:"/fa/approvals",image:<i className="bi bi-file-check"></i>},
           {name:"Announcements",url:"/fa/announcements",image:<i className="bi bi-megaphone-fill"></i>},
-          {name:"Guidelines",url:guidelinesUrl,external:true,image:assets.guidelines},
+          {name:"Guidelines",url:faguidelinesUrl,external:true,image:assets.guidelines},
       ]},
     ];
 

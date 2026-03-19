@@ -158,7 +158,7 @@ useEffect(() => {
             </div>
             <div className="activity-header">
                 <h2 className="activity-title">Student List</h2>
-                <Link to="/student-list" className="all-btn">See All</Link>
+                <Link to="/fa/student-list" className="all-btn">See All</Link>
             </div>
 
             <table className="activity-table">
