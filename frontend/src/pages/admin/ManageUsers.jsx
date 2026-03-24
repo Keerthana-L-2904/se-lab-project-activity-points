@@ -366,7 +366,7 @@ const uploadFas = async () => {
             <tbody>
               {paginatedFas.map((fa) => (
                 <tr key={fa.id}>
-                  td>{fa.faid}</td>
+                  <td>{fa.faid}</td>
                   <td>{fa.name}</td>
                   <td>{fa.emailID}</td>
                   <td>{fa.department?.name}</td>
