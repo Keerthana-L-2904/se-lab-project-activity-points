@@ -156,7 +156,7 @@ public class ExcelFileValidationUtil {
         String email = getCellString(row.getCell(1));
     
         // Name: alphabets and spaces only
-        if (name == null || !name.matches("[A-Za-z ]+")) {
+        if (name == null || !name.matches("[A-Za-z .\\-]+")) {
             return false;
         }
     

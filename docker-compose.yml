@@ -19,7 +19,7 @@ services:
       - app-network
 
   backend:
-    image: chrisscharls123/activity-points-backend:v2
+    image: chrisscharls123/activity-points-backend:v3
     container_name: backend
     restart: on-failure
     ports:

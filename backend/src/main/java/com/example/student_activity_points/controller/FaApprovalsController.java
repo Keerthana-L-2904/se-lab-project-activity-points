@@ -322,10 +322,13 @@ public class FaApprovalsController {
             // Update student points based on activity type
             if (req.getType() == Type.Institute) {
                 student.setInstitutePoints(student.getInstitutePoints() + points);
+                student.setActivityPoints(student.getActivityPoints()+points);
             } else if (req.getType() == Type.Department) {
                 student.setDeptPoints(student.getDeptPoints() + points);
+                student.setActivityPoints(student.getActivityPoints()+points);;
             } else if (req.getType() == Type.Other) {
                 student.setOtherPoints(student.getOtherPoints() + points);
+                student.setActivityPoints(student.getActivityPoints()+points);
             }
 
             studentActivityRepository.save(studentActivity);

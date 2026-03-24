@@ -327,6 +327,7 @@ public class AdminManageUsersController {
     
     @PutMapping("/student/{id}")
     public ResponseEntity<?> updateStudent(@PathVariable String id, @RequestBody Student updatedStudent) {
+        int activity_points=0;
         try {
             Optional<Student> existingStudentOpt = studentRepository.findById(id);
             
@@ -334,15 +335,15 @@ public class AdminManageUsersController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Student record not found");
             }
-            if (updatedStudent.getDeptPoints() != 0 && updatedStudent.getDeptPoints() < 0) {
+            if (updatedStudent.getDeptPoints() < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Dept points must be positive");
             }
-            if (updatedStudent.getInstitutePoints() != 0 && updatedStudent.getInstitutePoints() < 0) {
+            if ( updatedStudent.getInstitutePoints() < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Institute points must be positive");
             }
-            if (updatedStudent.getOtherPoints() != 0 && updatedStudent.getOtherPoints() < 0) {
+            if (updatedStudent.getOtherPoints() < 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Other points must be positive");
             }
@@ -357,18 +358,23 @@ public class AdminManageUsersController {
                 existingStudent.setEmailID(updatedStudent.getEmailID());
             }
             
-            if (updatedStudent.getDeptPoints() != 0) {
+            if (updatedStudent.getDeptPoints() >= 0) {
+                activity_points+=updatedStudent.getDeptPoints();
                 existingStudent.setDeptPoints(updatedStudent.getDeptPoints());
             }
             
-            if (updatedStudent.getInstitutePoints() != 0) {
+            if (updatedStudent.getInstitutePoints() >= 0) {
+                activity_points+=updatedStudent.getInstitutePoints();
                 existingStudent.setInstitutePoints(updatedStudent.getInstitutePoints());
             }
 
-            if (updatedStudent.getOtherPoints() != 0) {
+            if (updatedStudent.getOtherPoints() >= 0) {
+                activity_points+=updatedStudent.getOtherPoints();
                 existingStudent.setOtherPoints(updatedStudent.getOtherPoints());
             }
             
+            existingStudent.setActivityPoints(activity_points);
+
             if (updatedStudent.getFaid() != 0) {
                 existingStudent.setFaid(updatedStudent.getFaid());
             }
