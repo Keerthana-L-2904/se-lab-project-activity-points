@@ -125,7 +125,7 @@ public class ExcelFileValidationUtil {
                 }
             
                 // Name must be alphabetic (allow spaces)
-                if (name == null || !name.matches("[A-Za-z ]+")) {
+                if (name == null || !name.matches("[A-Za-z .\\-]+")) {
                     return false;
                 }
             
