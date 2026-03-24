@@ -361,11 +361,12 @@ const uploadFas = async () => {
           <input type="text" placeholder="Enter FA Name" value={filterFaName} onChange={(e) => setFilterFaName(e.target.value)}/>
           <table>
             <thead>
-              <tr><th>Name</th><th>Email</th><th>Department Name</th></tr>
+              <tr><th>FAID</th><th>Name</th><th>Email</th><th>Department Name</th></tr>
             </thead>
             <tbody>
               {paginatedFas.map((fa) => (
                 <tr key={fa.id}>
+                  td>{fa.id}</td>
                   <td>{fa.name}</td>
                   <td>{fa.emailID}</td>
                   <td>{fa.department?.name}</td>
