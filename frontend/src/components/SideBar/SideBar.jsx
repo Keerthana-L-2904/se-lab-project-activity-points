@@ -1,46 +1,50 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import './sidebar.css'
-import { useState,useContext } from 'react'
+import { useState, useContext } from 'react'
 import assets from '../../assets/assets'
-import {AuthContext} from '../../context/AuthContext'
+import { AuthContext } from '../../context/AuthContext'
 import { CiLogout } from "react-icons/ci";
 
-
-
-const SideBar = ({role}) => {
+const SideBar = ({ role }) => {
   const [isOpen, setIsOpen] = useState(true);
   const { logout } = useContext(AuthContext);
   const toggleSidebar = () => setIsOpen(!isOpen);
-  const handlelogout=()=>{
-    logout() }
-    const adminguidelinesUrl = "https://docs.google.com/document/d/1Vg-vn_eAtPbE8F2HA7U_SdyPOo4NVsx-Xwxg8xBHLCs/edit?tab=t.0";
-    const faguidelinesUrl="https://docs.google.com/document/d/1m1wt0K5PEmpURZKslvvljmU8GeTx5Lmhv3PGp3nu1wE/edit?tab=t.0"
-    const studentguidelinesUrl="https://docs.google.com/document/d/12VOTwQTsF1BzyUE_ylicpzNn9YXoARRIUOhXodD7B1c/edit?tab=t.0"
+  const handlelogout = () => { logout() }
 
-    const links=[
-      {view:"admin",links:[
-          {name:"Create Account",url:"/admin/register",image:assets.dashboard},
-          {name:"Dashboard",url:"/admin/dashboard",image:assets.dashboard},
-          {name:"Manage Users",url:"/admin/users",image:assets.users},
-          {name:"Manage Activities",url:"/admin/activities",image:assets.activities},
-          {name:"Guidelines",url:adminguidelinesUrl,external:true,image:assets.guidelines},
-      ]},
-      {view:"student",links:[
-          {name:"Dashboard",url:"/student/dashboard",image:assets.dashboard},
-          {name:"Tracking",url:"/student/tracking",image:<i className="bi bi-radar"></i>},
-          {name:"Activity History",url:"/student/activity-history",image:<i className="bi bi-hourglass-bottom"></i>},
-          {name:"Activities",url:"/student/activities",image:<i className="bi bi-hourglass-bottom"></i>},
-          {name:"Request Form",url:"/student/request-form",image:<i className="bi bi-file-earmark-text"></i>},
-          {name:"Guidelines",url:studentguidelinesUrl,external:true,image:assets.guidelines},
-      ]},
-      {view:"fa",links:[
-          {name:"Dashboard",url:"/fa/dashboard",image:assets.dashboard},
-          {name:"Approval",url:"/fa/approvals",image:<i className="bi bi-file-check"></i>},
-          {name:"Announcements",url:"/fa/announcements",image:<i className="bi bi-megaphone-fill"></i>},
-          {name:"Guidelines",url:faguidelinesUrl,external:true,image:assets.guidelines},
-      ]},
-    ];
+  const adminguidelinesUrl = "https://docs.google.com/document/d/1Vg-vn_eAtPbE8F2HA7U_SdyPOo4NVsx-Xwxg8xBHLCs/edit?tab=t.0";
+  const faguidelinesUrl = "https://docs.google.com/document/d/1m1wt0K5PEmpURZKslvvljmU8GeTx5Lmhv3PGp3nu1wE/edit?tab=t.0"
+  const studentguidelinesUrl = "https://docs.google.com/document/d/12VOTwQTsF1BzyUE_ylicpzNn9YXoARRIUOhXodD7B1c/edit?tab=t.0"
+
+  const links = [
+    {
+      view: "admin", links: [
+        { name: "Create Account", url: "/admin/register", image: assets.dashboard },
+        { name: "Dashboard", url: "/admin/dashboard", image: assets.dashboard },
+        { name: "Manage Users", url: "/admin/users", image: assets.users },
+        { name: "Manage Activities", url: "/admin/activities", image: assets.activities },
+        { name: "Guidelines", url: adminguidelinesUrl, external: true, image: assets.guidelines },
+      ]
+    },
+    {
+      view: "student", links: [
+        { name: "Dashboard", url: "/student/dashboard", image: assets.dashboard },
+        { name: "Tracking", url: "/student/tracking", image: <i className="bi bi-radar"></i> },
+        { name: "Activity History", url: "/student/activity-history", image: <i className="bi bi-hourglass-bottom"></i> },
+        { name: "Activities", url: "/student/activities", image: <i className="bi bi-hourglass-bottom"></i> },
+        { name: "Request Form", url: "/student/request-form", image: <i className="bi bi-file-earmark-text"></i> },
+        { name: "Guidelines", url: studentguidelinesUrl, external: true, image: assets.guidelines },
+      ]
+    },
+    {
+      view: "fa", links: [
+        { name: "Dashboard", url: "/fa/dashboard", image: assets.dashboard },
+        { name: "Approval", url: "/fa/approvals", image: <i className="bi bi-file-check"></i> },
+        { name: "Announcements", url: "/fa/announcements", image: <i className="bi bi-megaphone-fill"></i> },
+        { name: "Guidelines", url: faguidelinesUrl, external: true, image: assets.guidelines },
+      ]
+    },
+  ];
 
   return (
     <div className='container'  style={{width: isOpen ? 'auto' : '75px'}}>
@@ -63,27 +67,40 @@ const SideBar = ({role}) => {
 </linearGradient>
 </defs>
 </svg>
-    <div className="shortcuts">
-    {links.filter(e=>e.view==role).flatMap((e) => e.links).map((link,index)=>(
-            <div className='shortcut' key={index} >
-               {link.image}
-                <Link to={link.url} key={index} style={{display: isOpen ? 'flex' : 'none'}} className="block py-2 px-4 text-gray-600 hover:bg-gray-200 hover:text-gray-700"> {link.name} </Link>
-            </div>
-            
-      ))}
-    </div>
-    <div className="shortcuts" id="logout">
-      <button 
-        onClick={handlelogout} 
-        style={{ display: isOpen ? 'flex' : 'none', alignItems: 'center', gap: '8px' }}
-      >
-        <CiLogout size={20} />
-        Logout
-      </button>
-    </div>
+      
+      <div className="shortcuts">
+        {links.filter(e => e.view == role).flatMap((e) => e.links).map((link, index) => (
+          <div className='shortcut' key={index}>
+            {link.image}
+            <Link to={link.url} key={index} style={{ display: isOpen ? 'flex' : 'none' }} className="block py-2 px-4 text-gray-600 hover:bg-gray-200 hover:text-gray-700">
+              {link.name}
+            </Link>
+          </div>
+        ))}
+      </div>
 
+      <div className="shortcuts" id="logout">
+        <button
+          onClick={handlelogout}
+          style={{ display: isOpen ? 'flex' : 'none', alignItems: 'center', gap: '8px' }}
+        >
+          <CiLogout size={20} />
+          Logout
+        </button>
+      </div>
+
+      {/* Developer Credits */}
+      {isOpen && (
+        <div className="dev-credits">
+          <p>Developed by</p>
+          <p>Chriss Charls (B220224CS)</p>
+          <p>Keerthana L (B220038CS)</p>
+          <p>Veda Vijayshankar (B220584CS)</p>
+        </div>
+      )}
     </div>
   )
 }
 
 export default SideBar
+
