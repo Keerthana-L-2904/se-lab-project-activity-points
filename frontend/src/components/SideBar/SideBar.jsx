@@ -72,9 +72,15 @@ const SideBar = ({ role }) => {
         {links.filter(e => e.view == role).flatMap((e) => e.links).map((link, index) => (
           <div className='shortcut' key={index}>
             {link.image}
-            <Link to={link.url} key={index} style={{ display: isOpen ? 'flex' : 'none' }} className="block py-2 px-4 text-gray-600 hover:bg-gray-200 hover:text-gray-700">
-              {link.name}
-            </Link>
+            {link.external ? (
+              <a href={link.url} target="_blank" rel="noreferrer" style={{ display: isOpen ? 'flex' : 'none' }} className="block py-2 px-4 text-gray-600 hover:bg-gray-200 hover:text-gray-700">
+                {link.name}
+              </a>
+            ) : (
+              <Link to={link.url} style={{ display: isOpen ? 'flex' : 'none' }} className="block py-2 px-4 text-gray-600 hover:bg-gray-200 hover:text-gray-700">
+                {link.name}
+              </Link>
+            )}
           </div>
         ))}
       </div>
@@ -103,4 +109,3 @@ const SideBar = ({ role }) => {
 }
 
 export default SideBar
-
